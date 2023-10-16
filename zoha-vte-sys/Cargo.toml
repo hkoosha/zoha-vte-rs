@@ -4,6 +4,11 @@ version = "0.4.1"
 links = "\"vte-2.91\""
 edition = "2018"
 build = "build.rs"
+authors = ["Koosha Hosseiny <i@koosha.io>"]
+description = "Temporary crate: updated version of https://github.com/antoyo/vte-rs, until that crate is updated."
+homepage = "https://github.com/hkoosha/zoha-vte-rs"
+license = "GPL-3.0"
+readme = "README.md"
 
 [package.metadata.system-deps.vte_2_91]
 name = "vte-2.91"

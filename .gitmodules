@@ -3,4 +3,4 @@
 	url = https://github.com/gtk-rs/gir-files.git
 [submodule "gir"]
 	path = gir
-	url = https://github.com/gtk-rs/gir
+	url = https://github.com/gtk-rs/gir.git
