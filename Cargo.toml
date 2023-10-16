@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "zoha-vte",
+    "zoha-vte-sys"
+]
+
+exclude = [
+    "gir-files",
+    "gir"
+]
+

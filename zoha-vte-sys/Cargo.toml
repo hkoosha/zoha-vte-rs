@@ -1,0 +1,111 @@
+[package]
+name = "zoha-vte-sys"
+version = "0.4.1"
+links = "\"vte-2.91\""
+edition = "2018"
+build = "build.rs"
+
+[package.metadata.system-deps.vte_2_91]
+name = "vte-2.91"
+version = "0.0"
+
+[package.metadata.system-deps.vte_2_91.v0_40]
+version = "0.40"
+
+[package.metadata.system-deps.vte_2_91.v0_42]
+version = "0.42"
+
+[package.metadata.system-deps.vte_2_91.v0_44]
+version = "0.44"
+
+[package.metadata.system-deps.vte_2_91.v0_46]
+version = "0.46"
+
+[package.metadata.system-deps.vte_2_91.v0_48]
+version = "0.48"
+
+[package.metadata.system-deps.vte_2_91.v0_50]
+version = "0.50"
+
+[package.metadata.system-deps.vte_2_91.v0_52]
+version = "0.52"
+
+[package.metadata.system-deps.vte_2_91.v0_54]
+version = "0.54"
+
+[package.metadata.system-deps.vte_2_91.v0_56]
+version = "0.56"
+
+[package.metadata.system-deps.vte_2_91.v0_58]
+version = "0.58"
+
+[package.metadata.system-deps.vte_2_91.v0_60]
+version = "0.60"
+
+[package.metadata.system-deps.vte_2_91.v0_62]
+version = "0.62"
+
+[package.metadata.system-deps.vte_2_91.v0_64]
+version = "0.64"
+
+[package.metadata.system-deps.vte_2_91.v0_66]
+version = "0.66"
+
+[package.metadata.system-deps.vte_2_91.v0_68]
+version = "0.68"
+
+[package.metadata.system-deps.vte_2_91.v0_70]
+version = "0.70"
+
+[package.metadata.system-deps.vte_2_91.v0_72]
+version = "0.72"
+
+[package.metadata.system-deps.vte_2_91.v0_74]
+version = "0.74"
+
+[package.metadata.system-deps.vte_2_91.v0_76]
+version = "0.76"
+
+[package.metadata.docs.rs]
+features = []
+
+[lib]
+name = "zoha_vte_sys"
+
+[dependencies]
+libc = "0.2"
+gtk-sys = "0.18.0"
+gio-sys = "0.18.1"
+gdk-sys = "0.18.0"
+glib-sys = "0.18.1"
+pango-sys = "0.18.0"
+cairo= "0.0.4"
+
+[build-dependencies]
+system-deps = "6"
+
+[dev-dependencies]
+shell-words = "1.0.0"
+tempfile = "3"
+
+[features]
+v0_40 = []
+v0_42 = ["v0_40"]
+v0_44 = ["v0_42"]
+v0_46 = ["v0_44"]
+v0_48 = ["v0_46"]
+v0_50 = ["v0_48"]
+v0_52 = ["v0_50"]
+v0_54 = ["v0_52"]
+v0_56 = ["v0_54"]
+v0_58 = ["v0_56"]
+v0_60 = ["v0_58"]
+v0_62 = ["v0_60"]
+dox = []
+v0_64 = ["v0_62"]
+v0_66 = ["v0_64"]
+v0_68 = ["v0_66"]
+v0_70 = ["v0_68"]
+v0_72 = ["v0_70"]
+v0_74 = ["v0_72"]
+v0_76 = ["v0_74"]

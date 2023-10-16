@@ -1,0 +1,69 @@
+[options]
+library = "Vte"
+version = "2.91"
+work_mode = "normal"
+target_path = "."
+generate_safety_asserts = true
+deprecate_by_min_version = true
+single_version_file = true
+girs_directories = [
+    "../gir-files",
+    "../"
+]
+
+external_libraries = [
+    "Atk",
+    "Gdk",
+    "Gio",
+    "Gtk",
+    "GLib",
+    "GObject",
+    "Pango",
+]
+
+generate = [
+    # "Vte.CharAttributes",
+    "Vte.CursorBlinkMode",
+    "Vte.CursorShape",
+    "Vte.EraseBinding",
+    "Vte.FeatureFlags",
+    "Vte.Format",
+    "Vte.Pty",
+    "Vte.PtyFlags",
+    "Vte.PtyError",
+    "Vte.Regex",
+    "Vte.RegexError",
+    "Vte.Terminal",
+    "Vte.TextBlinkMode",
+    "Vte.WriteFlags",
+    "Vte.SelectionFunc",
+    "Vte.TerminalSpawnAsyncCallback",
+]
+
+manual = [
+    "Atk.ImplementorIface",
+    "Gdk.Cursor",
+    "Gdk.CursorType",
+    "Gdk.Event",
+    # "Gdk.Geometry",
+    "Gdk.RGBA",
+    "Gio.AsyncReadyCallback",
+    "Gio.AsyncResult",
+    "Gio.Cancellable",
+    "Gio.OutputStream",
+    "Gio.Initable",
+    "GLib.DestroyNotify",
+    "GLib.Error",
+    "GLib.Pid",
+    "GLib.SpawnError",
+    "GLib.SpawnFlags",
+    "GLib.SpawnChildSetupFunc",
+    "GLib.Regex",
+    "GLib.RegexMatchFlags",
+    "Gtk.Widget",
+    "Gtk.Window",
+    "Gtk.Scrollable",
+    "Gtk.Buildable",
+    "Pango.FontDescription",
+    "GObject.InitiallyUnowned",
+]

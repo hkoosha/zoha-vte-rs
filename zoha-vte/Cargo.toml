@@ -1,0 +1,27 @@
+[package]
+name = "zoha-vte"
+version = "0.4.1"
+
+[dependencies]
+bitflags = "1.2.1"
+gdk = "0.18.0"
+gdk-sys = "0.18.0"
+gtk = "0.18.1"
+gtk-sys = "0.18.0"
+glib = "0.18.2"
+glib-sys = "0.18.1"
+gio = "0.18.2"
+pango = "0.18.0"
+gobject-sys = "0.18.0"
+atk = "0.18.0"
+libc = "0.2"
+
+zoha-vte-sys = { path = "../zoha-vte-sys", version = "*"}
+
+[features]
+v0_40 = ["zoha-vte-sys/v0_40"]
+v0_42 = ["v0_40", "zoha-vte-sys/v0_42"]
+v0_44 = ["v0_42", "zoha-vte-sys/v0_44"]
+v0_46 = ["v0_44", "zoha-vte-sys/v0_46"]
+v0_48 = ["v0_46", "zoha-vte-sys/v0_48"]
+v0_50 = ["v0_48", "zoha-vte-sys/v0_50"]
