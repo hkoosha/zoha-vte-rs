@@ -4,6 +4,8 @@
 // DO NOT EDIT
 #![allow(deprecated)]
 
+use zoha_vte_sys as ffi;
+
 use crate::{CursorBlinkMode,CursorShape,EraseBinding,Pty,PtyFlags,WriteFlags};
 #[cfg(feature = "v0_46")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
@@ -15,16 +17,14 @@ use crate::{Format};
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
 use crate::{TextBlinkMode};
 use glib::{prelude::*,signal::{connect_raw, SignalHandlerId},translate::*};
-use std::{boxed::Box as Box_,fmt,mem,mem::transmute,ptr};
-use zoha_vte_sys::*;
+use std::{boxed::Box as Box_};
 
-// gobject::InitiallyUnowned,
 glib::wrapper! {
     #[doc(alias = "VteTerminal")]
-    pub struct Terminal(Object<VteTerminal, VteTerminalClass>) @extends gtk::Widget, @implements gtk::Buildable, gtk::Scrollable;
+    pub struct Terminal(Object<ffi::VteTerminal, ffi::VteTerminalClass>) @extends gtk::Widget, gtk::Buildable, gtk::Scrollable;
 
     match fn {
-        type_ => || vte_terminal_get_type(),
+        type_ => || ffi::vte_terminal_get_type(),
     }
 }
 
@@ -36,7 +36,7 @@ impl Terminal {
     pub fn new() -> Terminal {
         assert_initialized_main_thread!();
         unsafe {
-            from_glib_none(vte_terminal_new())
+            from_glib_none(ffi::vte_terminal_new())
         }
     }
 }
@@ -58,7 +58,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_copy_clipboard")]
     fn copy_clipboard(&self) {
         unsafe {
-            vte_terminal_copy_clipboard(self.as_ref().to_glib_none().0);
+            ffi::vte_terminal_copy_clipboard(self.as_ref().to_glib_none().0);
         }
     }
 
@@ -67,51 +67,45 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_copy_clipboard_format")]
     fn copy_clipboard_format(&self, format: Format) {
         unsafe {
-            vte_terminal_copy_clipboard_format(self.as_ref().to_glib_none().0, format.into_glib());
+            ffi::vte_terminal_copy_clipboard_format(self.as_ref().to_glib_none().0, format.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_copy_primary")]
     fn copy_primary(&self) {
         unsafe {
-            vte_terminal_copy_primary(self.as_ref().to_glib_none().0);
+            ffi::vte_terminal_copy_primary(self.as_ref().to_glib_none().0);
         }
     }
 
-    // #[cfg_attr(feature = "v0_46", deprecated = "Since 0.46")]
-    // #[cfg(feature = "v0_44")]
-    // #[cfg_attr(docsrs, doc(cfg(feature = "v0_44")))]
-    // #[allow(deprecated)]
-    // #[doc(alias = "vte_terminal_event_check_gregex_simple")]
-    // fn event_check_gregex_simple(&self, event: &mut gdk::Event, regexes: &[&glib::Regex], match_flags: glib::RegexMatchFlags) -> Option<Vec<glib::GString>> {
+    //#[cfg_attr(feature = "v0_46", deprecated = "Since 0.46")]
+    //#[cfg(feature = "v0_44")]
+    //#[cfg_attr(docsrs, doc(cfg(feature = "v0_44")))]
+    //#[allow(deprecated)]
+    //#[doc(alias = "vte_terminal_event_check_gregex_simple")]
+    //fn event_check_gregex_simple(&self, event: &mut gdk::Event, regexes: /*Ignored*/&[&glib::Regex], match_flags: /*Ignored*/glib::RegexMatchFlags) -> Option<Vec<glib::GString>> {
+    //    unsafe { TODO: call ffi:vte_terminal_event_check_gregex_simple() }
+    //}
+
+    // #[cfg(feature = "v0_62")]
+    // #[cfg_attr(docsrs, doc(cfg(feature = "v0_62")))]
+    // #[doc(alias = "vte_terminal_event_check_regex_array")]
+    // fn event_check_regex_array(&self, event: &mut gdk::Event, regexes: &[&Regex], match_flags: u32) -> Vec<glib::GString> {
+    //     let n_regexes = regexes.len() as _;
     //     unsafe {
-    //         let mut n_regexes = mem::MaybeUninit::uninit();
-    //         let mut matches = Vec::<glib::GString>::uninitialized();
-    //         let ret = from_glib(vte_terminal_event_check_gregex_simple(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, regexes.to_glib_none().0, n_regexes.as_mut_ptr(), match_flags.into_glib(), matches.to_glib_none_mut().0));
-    //         if ret { Some(matches) } else { None }
+    //         let mut n_matches = std::mem::MaybeUninit::uninit();
+    //         let ret = FromGlibContainer::from_glib_full_num(ffi::vte_terminal_event_check_regex_array(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, regexes.to_glib_none().0, n_regexes, match_flags, n_matches.as_mut_ptr()), n_matches.assume_init() as _);
+    //         ret
     //     }
     // }
-
-    #[cfg(feature = "v0_62")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "v0_62")))]
-    #[doc(alias = "vte_terminal_event_check_regex_array")]
-    fn event_check_regex_array(&self, event: &mut gdk::Event, regexes: &[&Regex], match_flags: u32) -> Vec<glib::GString> {
-        let n_regexes = regexes.len() as _;
-        unsafe {
-            let mut n_matches = mem::MaybeUninit::uninit();
-            let ret = FromGlibContainer::from_glib_full_num(vte_terminal_event_check_regex_array(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, regexes.to_glib_none().0, n_regexes, match_flags, n_matches.as_mut_ptr()), n_matches.assume_init() as _);
-            ret
-        }
-    }
 
     // #[cfg(feature = "v0_46")]
     // #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
     // #[doc(alias = "vte_terminal_event_check_regex_simple")]
     // fn event_check_regex_simple(&self, event: &mut gdk::Event, regexes: &[&Regex], match_flags: u32) -> Option<Vec<glib::GString>> {
     //     unsafe {
-    //         let mut n_regexes = mem::MaybeUninit::uninit();
     //         let mut matches = Vec::<glib::GString>::uninitialized();
-    //         let ret = from_glib(vte_terminal_event_check_regex_simple(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, regexes.to_glib_none().0, n_regexes.as_mut_ptr(), match_flags, matches.to_glib_none_mut().0));
+    //         let ret = from_glib(ffi::vte_terminal_event_check_regex_simple(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, regexes.to_glib_none().0, regexes.len(), match_flags, matches.to_glib_none_mut().0));
     //         if ret { Some(matches) } else { None }
     //     }
     // }
@@ -120,7 +114,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     fn feed(&self, data: &[u8]) {
         let length = data.len() as _;
         unsafe {
-            vte_terminal_feed(self.as_ref().to_glib_none().0, data.to_glib_none().0, length);
+            ffi::vte_terminal_feed(self.as_ref().to_glib_none().0, data.to_glib_none().0, length);
         }
     }
 
@@ -128,7 +122,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     fn feed_child(&self, text: &[u8]) {
         let length = text.len() as _;
         unsafe {
-            vte_terminal_feed_child(self.as_ref().to_glib_none().0, text.to_glib_none().0, length);
+            ffi::vte_terminal_feed_child(self.as_ref().to_glib_none().0, text.to_glib_none().0, length);
         }
     }
 
@@ -138,7 +132,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     fn feed_child_binary(&self, data: &[u8]) {
         let length = data.len() as _;
         unsafe {
-            vte_terminal_feed_child_binary(self.as_ref().to_glib_none().0, data.to_glib_none().0, length);
+            ffi::vte_terminal_feed_child_binary(self.as_ref().to_glib_none().0, data.to_glib_none().0, length);
         }
     }
 
@@ -148,7 +142,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_allow_bold")]
     fn allows_bold(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_allow_bold(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_allow_bold(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -158,7 +152,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_allow_hyperlink")]
     fn allows_hyperlink(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_allow_hyperlink(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_allow_hyperlink(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -166,7 +160,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_audible_bell")]
     fn is_audible_bell(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_audible_bell(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_audible_bell(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -176,7 +170,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_bold_is_bright")]
     fn is_bold_is_bright(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_bold_is_bright(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_bold_is_bright(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -186,7 +180,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_cell_height_scale")]
     fn cell_height_scale(&self) -> f64 {
         unsafe {
-            vte_terminal_get_cell_height_scale(self.as_ref().to_glib_none().0)
+            ffi::vte_terminal_get_cell_height_scale(self.as_ref().to_glib_none().0)
         }
     }
 
@@ -196,7 +190,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_cell_width_scale")]
     fn cell_width_scale(&self) -> f64 {
         unsafe {
-            vte_terminal_get_cell_width_scale(self.as_ref().to_glib_none().0)
+            ffi::vte_terminal_get_cell_width_scale(self.as_ref().to_glib_none().0)
         }
     }
 
@@ -204,7 +198,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_char_height")]
     fn char_height(&self) -> libc::c_long {
         unsafe {
-            vte_terminal_get_char_height(self.as_ref().to_glib_none().0)
+            ffi::vte_terminal_get_char_height(self.as_ref().to_glib_none().0)
         }
     }
 
@@ -212,7 +206,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_char_width")]
     fn char_width(&self) -> libc::c_long {
         unsafe {
-            vte_terminal_get_char_width(self.as_ref().to_glib_none().0)
+            ffi::vte_terminal_get_char_width(self.as_ref().to_glib_none().0)
         }
     }
 
@@ -220,7 +214,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_cjk_ambiguous_width")]
     fn cjk_ambiguous_width(&self) -> i32 {
         unsafe {
-            vte_terminal_get_cjk_ambiguous_width(self.as_ref().to_glib_none().0)
+            ffi::vte_terminal_get_cjk_ambiguous_width(self.as_ref().to_glib_none().0)
         }
     }
 
@@ -231,7 +225,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     fn color_background_for_draw(&self) -> gdk::RGBA {
         unsafe {
             let mut color = gdk::RGBA::uninitialized();
-            vte_terminal_get_color_background_for_draw(self.as_ref().to_glib_none().0, color.to_glib_none_mut().0);
+            ffi::vte_terminal_get_color_background_for_draw(self.as_ref().to_glib_none().0, color.to_glib_none_mut().0);
             color
         }
     }
@@ -240,7 +234,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_column_count")]
     fn column_count(&self) -> libc::c_long {
         unsafe {
-            vte_terminal_get_column_count(self.as_ref().to_glib_none().0)
+            ffi::vte_terminal_get_column_count(self.as_ref().to_glib_none().0)
         }
     }
 
@@ -248,7 +242,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_current_directory_uri")]
     fn current_directory_uri(&self) -> Option<glib::GString> {
         unsafe {
-            from_glib_none(vte_terminal_get_current_directory_uri(self.as_ref().to_glib_none().0))
+            from_glib_none(ffi::vte_terminal_get_current_directory_uri(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -256,7 +250,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_current_file_uri")]
     fn current_file_uri(&self) -> Option<glib::GString> {
         unsafe {
-            from_glib_none(vte_terminal_get_current_file_uri(self.as_ref().to_glib_none().0))
+            from_glib_none(ffi::vte_terminal_get_current_file_uri(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -264,7 +258,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_cursor_blink_mode")]
     fn cursor_blink_mode(&self) -> CursorBlinkMode {
         unsafe {
-            from_glib(vte_terminal_get_cursor_blink_mode(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_cursor_blink_mode(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -272,9 +266,9 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_cursor_position")]
     fn cursor_position(&self) -> (libc::c_long, libc::c_long) {
         unsafe {
-            let mut column = mem::MaybeUninit::uninit();
-            let mut row = mem::MaybeUninit::uninit();
-            vte_terminal_get_cursor_position(self.as_ref().to_glib_none().0, column.as_mut_ptr(), row.as_mut_ptr());
+            let mut column = std::mem::MaybeUninit::uninit();
+            let mut row = std::mem::MaybeUninit::uninit();
+            ffi::vte_terminal_get_cursor_position(self.as_ref().to_glib_none().0, column.as_mut_ptr(), row.as_mut_ptr());
             (column.assume_init(), row.assume_init())
         }
     }
@@ -283,7 +277,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_cursor_shape")]
     fn cursor_shape(&self) -> CursorShape {
         unsafe {
-            from_glib(vte_terminal_get_cursor_shape(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_cursor_shape(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -293,7 +287,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_enable_bidi")]
     fn enables_bidi(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_enable_bidi(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_enable_bidi(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -303,7 +297,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_enable_fallback_scrolling")]
     fn enables_fallback_scrolling(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_enable_fallback_scrolling(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_enable_fallback_scrolling(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -313,7 +307,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_enable_shaping")]
     fn enables_shaping(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_enable_shaping(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_enable_shaping(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -323,7 +317,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_enable_sixel")]
     fn enables_sixel(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_enable_sixel(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_enable_sixel(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -333,7 +327,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_encoding")]
     fn encoding(&self) -> Option<glib::GString> {
         unsafe {
-            from_glib_none(vte_terminal_get_encoding(self.as_ref().to_glib_none().0))
+            from_glib_none(ffi::vte_terminal_get_encoding(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -341,7 +335,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_font")]
     fn font(&self) -> Option<pango::FontDescription> {
         unsafe {
-            from_glib_none(vte_terminal_get_font(self.as_ref().to_glib_none().0))
+            from_glib_none(ffi::vte_terminal_get_font(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -357,7 +351,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_font_scale")]
     fn font_scale(&self) -> f64 {
         unsafe {
-            vte_terminal_get_font_scale(self.as_ref().to_glib_none().0)
+            ffi::vte_terminal_get_font_scale(self.as_ref().to_glib_none().0)
         }
     }
 
@@ -373,7 +367,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_has_selection")]
     fn has_selection(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_has_selection(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_has_selection(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -383,7 +377,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_icon_title")]
     fn icon_title(&self) -> Option<glib::GString> {
         unsafe {
-            from_glib_none(vte_terminal_get_icon_title(self.as_ref().to_glib_none().0))
+            from_glib_none(ffi::vte_terminal_get_icon_title(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -391,7 +385,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_input_enabled")]
     fn is_input_enabled(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_input_enabled(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_input_enabled(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -399,7 +393,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_mouse_autohide")]
     fn is_mouse_autohide(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_mouse_autohide(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_mouse_autohide(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -407,7 +401,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_pty")]
     fn pty(&self) -> Option<Pty> {
         unsafe {
-            from_glib_none(vte_terminal_get_pty(self.as_ref().to_glib_none().0))
+            from_glib_none(ffi::vte_terminal_get_pty(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -417,7 +411,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_rewrap_on_resize")]
     fn is_rewrap_on_resize(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_rewrap_on_resize(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_rewrap_on_resize(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -425,7 +419,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_row_count")]
     fn row_count(&self) -> libc::c_long {
         unsafe {
-            vte_terminal_get_row_count(self.as_ref().to_glib_none().0)
+            ffi::vte_terminal_get_row_count(self.as_ref().to_glib_none().0)
         }
     }
 
@@ -435,7 +429,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_scroll_on_keystroke")]
     fn is_scroll_on_keystroke(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_scroll_on_keystroke(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_scroll_on_keystroke(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -445,7 +439,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_scroll_on_output")]
     fn is_scroll_on_output(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_scroll_on_output(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_scroll_on_output(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -455,7 +449,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_scroll_unit_is_pixels")]
     fn is_scroll_unit_is_pixels(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_scroll_unit_is_pixels(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_scroll_unit_is_pixels(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -465,7 +459,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_scrollback_lines")]
     fn scrollback_lines(&self) -> libc::c_long {
         unsafe {
-            vte_terminal_get_scrollback_lines(self.as_ref().to_glib_none().0)
+            ffi::vte_terminal_get_scrollback_lines(self.as_ref().to_glib_none().0)
         }
     }
 
@@ -481,7 +475,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_text_blink_mode")]
     fn text_blink_mode(&self) -> TextBlinkMode {
         unsafe {
-            from_glib(vte_terminal_get_text_blink_mode(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_text_blink_mode(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -505,8 +499,8 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_text_range_format")]
     fn text_range_format(&self, format: Format, start_row: libc::c_long, start_col: libc::c_long, end_row: libc::c_long, end_col: libc::c_long) -> (Option<glib::GString>, usize) {
         unsafe {
-            let mut length = mem::MaybeUninit::uninit();
-            let ret = from_glib_full(vte_terminal_get_text_range_format(self.as_ref().to_glib_none().0, format.into_glib(), start_row, start_col, end_row, end_col, length.as_mut_ptr()));
+            let mut length = std::mem::MaybeUninit::uninit();
+            let ret = from_glib_full(ffi::vte_terminal_get_text_range_format(self.as_ref().to_glib_none().0, format.into_glib(), start_row, start_col, end_row, end_col, length.as_mut_ptr()));
             (ret, length.assume_init())
         }
     }
@@ -517,7 +511,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_text_selected")]
     fn text_selected(&self, format: Format) -> Option<glib::GString> {
         unsafe {
-            from_glib_full(vte_terminal_get_text_selected(self.as_ref().to_glib_none().0, format.into_glib()))
+            from_glib_full(ffi::vte_terminal_get_text_selected(self.as_ref().to_glib_none().0, format.into_glib()))
         }
     }
 
@@ -527,8 +521,8 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_text_selected_full")]
     fn text_selected_full(&self, format: Format) -> (Option<glib::GString>, usize) {
         unsafe {
-            let mut length = mem::MaybeUninit::uninit();
-            let ret = from_glib_full(vte_terminal_get_text_selected_full(self.as_ref().to_glib_none().0, format.into_glib(), length.as_mut_ptr()));
+            let mut length = std::mem::MaybeUninit::uninit();
+            let ret = from_glib_full(ffi::vte_terminal_get_text_selected_full(self.as_ref().to_glib_none().0, format.into_glib(), length.as_mut_ptr()));
             (ret, length.assume_init())
         }
     }
@@ -537,7 +531,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_window_title")]
     fn window_title(&self) -> Option<glib::GString> {
         unsafe {
-            from_glib_none(vte_terminal_get_window_title(self.as_ref().to_glib_none().0))
+            from_glib_none(ffi::vte_terminal_get_window_title(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -547,7 +541,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_word_char_exceptions")]
     fn word_char_exceptions(&self) -> Option<glib::GString> {
         unsafe {
-            from_glib_none(vte_terminal_get_word_char_exceptions(self.as_ref().to_glib_none().0))
+            from_glib_none(ffi::vte_terminal_get_word_char_exceptions(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -565,7 +559,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_xfill")]
     fn is_xfill(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_xfill(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_xfill(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -583,7 +577,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "get_yfill")]
     fn is_yfill(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_get_yfill(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_get_yfill(self.as_ref().to_glib_none().0))
         }
     }
 
@@ -592,25 +586,23 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_hyperlink_check_event")]
     fn hyperlink_check_event(&self, event: &mut gdk::Event) -> Option<glib::GString> {
         unsafe {
-            from_glib_full(vte_terminal_hyperlink_check_event(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0))
+            from_glib_full(ffi::vte_terminal_hyperlink_check_event(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0))
         }
     }
 
-    // #[cfg_attr(feature = "v0_46", deprecated = "Since 0.46")]
-    // #[allow(deprecated)]
-    // #[doc(alias = "vte_terminal_match_add_gregex")]
-    // fn match_add_gregex(&self, gregex: &glib::Regex, gflags: glib::RegexMatchFlags) -> i32 {
-    //     unsafe {
-    //         vte_terminal_match_add_gregex(self.as_ref().to_glib_none().0, gregex.to_glib_none().0, gflags.into_glib())
-    //     }
-    // }
+    //#[cfg_attr(feature = "v0_46", deprecated = "Since 0.46")]
+    //#[allow(deprecated)]
+    //#[doc(alias = "vte_terminal_match_add_gregex")]
+    //fn match_add_gregex(&self, gregex: /*Ignored*/&glib::Regex, gflags: /*Ignored*/glib::RegexMatchFlags) -> i32 {
+    //    unsafe { TODO: call ffi:vte_terminal_match_add_gregex() }
+    //}
 
     #[cfg(feature = "v0_46")]
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
     #[doc(alias = "vte_terminal_match_add_regex")]
     fn match_add_regex(&self, regex: &Regex, flags: u32) -> i32 {
         unsafe {
-            vte_terminal_match_add_regex(self.as_ref().to_glib_none().0, regex.to_glib_none().0, flags)
+            ffi::vte_terminal_match_add_regex(self.as_ref().to_glib_none().0, regex.to_glib_none().0, flags)
         }
     }
 
@@ -619,8 +611,8 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_match_check")]
     fn match_check(&self, column: libc::c_long, row: libc::c_long) -> (Option<glib::GString>, i32) {
         unsafe {
-            let mut tag = mem::MaybeUninit::uninit();
-            let ret = from_glib_full(vte_terminal_match_check(self.as_ref().to_glib_none().0, column, row, tag.as_mut_ptr()));
+            let mut tag = std::mem::MaybeUninit::uninit();
+            let ret = from_glib_full(ffi::vte_terminal_match_check(self.as_ref().to_glib_none().0, column, row, tag.as_mut_ptr()));
             (ret, tag.assume_init())
         }
     }
@@ -628,8 +620,8 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_match_check_event")]
     fn match_check_event(&self, event: &mut gdk::Event) -> (Option<glib::GString>, i32) {
         unsafe {
-            let mut tag = mem::MaybeUninit::uninit();
-            let ret = from_glib_full(vte_terminal_match_check_event(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, tag.as_mut_ptr()));
+            let mut tag = std::mem::MaybeUninit::uninit();
+            let ret = from_glib_full(ffi::vte_terminal_match_check_event(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, tag.as_mut_ptr()));
             (ret, tag.assume_init())
         }
     }
@@ -637,14 +629,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_match_remove")]
     fn match_remove(&self, tag: i32) {
         unsafe {
-            vte_terminal_match_remove(self.as_ref().to_glib_none().0, tag);
+            ffi::vte_terminal_match_remove(self.as_ref().to_glib_none().0, tag);
         }
     }
 
     #[doc(alias = "vte_terminal_match_remove_all")]
     fn match_remove_all(&self) {
         unsafe {
-            vte_terminal_match_remove_all(self.as_ref().to_glib_none().0);
+            ffi::vte_terminal_match_remove_all(self.as_ref().to_glib_none().0);
         }
     }
 
@@ -653,14 +645,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_match_set_cursor")]
     fn match_set_cursor(&self, tag: i32, cursor: Option<&gdk::Cursor>) {
         unsafe {
-            vte_terminal_match_set_cursor(self.as_ref().to_glib_none().0, tag, cursor.to_glib_none().0);
+            ffi::vte_terminal_match_set_cursor(self.as_ref().to_glib_none().0, tag, cursor.to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_match_set_cursor_name")]
     fn match_set_cursor_name(&self, tag: i32, cursor_name: &str) {
         unsafe {
-            vte_terminal_match_set_cursor_name(self.as_ref().to_glib_none().0, tag, cursor_name.to_glib_none().0);
+            ffi::vte_terminal_match_set_cursor_name(self.as_ref().to_glib_none().0, tag, cursor_name.to_glib_none().0);
         }
     }
 
@@ -669,21 +661,21 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_match_set_cursor_type")]
     fn match_set_cursor_type(&self, tag: i32, cursor_type: gdk::CursorType) {
         unsafe {
-            vte_terminal_match_set_cursor_type(self.as_ref().to_glib_none().0, tag, cursor_type.into_glib());
+            ffi::vte_terminal_match_set_cursor_type(self.as_ref().to_glib_none().0, tag, cursor_type.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_paste_clipboard")]
     fn paste_clipboard(&self) {
         unsafe {
-            vte_terminal_paste_clipboard(self.as_ref().to_glib_none().0);
+            ffi::vte_terminal_paste_clipboard(self.as_ref().to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_paste_primary")]
     fn paste_primary(&self) {
         unsafe {
-            vte_terminal_paste_primary(self.as_ref().to_glib_none().0);
+            ffi::vte_terminal_paste_primary(self.as_ref().to_glib_none().0);
         }
     }
 
@@ -692,15 +684,15 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_paste_text")]
     fn paste_text(&self, text: &str) {
         unsafe {
-            vte_terminal_paste_text(self.as_ref().to_glib_none().0, text.to_glib_none().0);
+            ffi::vte_terminal_paste_text(self.as_ref().to_glib_none().0, text.to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_pty_new_sync")]
     fn pty_new_sync(&self, flags: PtyFlags, cancellable: Option<&impl IsA<gio::Cancellable>>) -> Result<Pty, glib::Error> {
         unsafe {
-            let mut error = ptr::null_mut();
-            let ret = vte_terminal_pty_new_sync(self.as_ref().to_glib_none().0, flags.into_glib(), cancellable.map(|p| p.as_ref()).to_glib_none().0, &mut error);
+            let mut error = std::ptr::null_mut();
+            let ret = ffi::vte_terminal_pty_new_sync(self.as_ref().to_glib_none().0, flags.into_glib(), cancellable.map(|p| p.as_ref()).to_glib_none().0, &mut error);
             if error.is_null() { Ok(from_glib_full(ret)) } else { Err(from_glib_full(error)) }
         }
     }
@@ -708,78 +700,74 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_reset")]
     fn reset(&self, clear_tabstops: bool, clear_history: bool) {
         unsafe {
-            vte_terminal_reset(self.as_ref().to_glib_none().0, clear_tabstops.into_glib(), clear_history.into_glib());
+            ffi::vte_terminal_reset(self.as_ref().to_glib_none().0, clear_tabstops.into_glib(), clear_history.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_search_find_next")]
     fn search_find_next(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_search_find_next(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_search_find_next(self.as_ref().to_glib_none().0))
         }
     }
 
     #[doc(alias = "vte_terminal_search_find_previous")]
     fn search_find_previous(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_search_find_previous(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_search_find_previous(self.as_ref().to_glib_none().0))
         }
     }
 
-    // #[cfg_attr(feature = "v0_46", deprecated = "Since 0.46")]
-    // #[allow(deprecated)]
-    // #[doc(alias = "vte_terminal_search_get_gregex")]
-    // fn search_get_gregex(&self) -> Option<glib::Regex> {
-    //     unsafe {
-    //         from_glib_none(vte_terminal_search_get_gregex(self.as_ref().to_glib_none().0))
-    //     }
-    // }
+    //#[cfg_attr(feature = "v0_46", deprecated = "Since 0.46")]
+    //#[allow(deprecated)]
+    //#[doc(alias = "vte_terminal_search_get_gregex")]
+    //fn search_get_gregex(&self) -> /*Ignored*/Option<glib::Regex> {
+    //    unsafe { TODO: call ffi:vte_terminal_search_get_gregex() }
+    //}
 
     #[cfg(feature = "v0_46")]
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
     #[doc(alias = "vte_terminal_search_get_regex")]
     fn search_get_regex(&self) -> Option<Regex> {
         unsafe {
-            from_glib_none(vte_terminal_search_get_regex(self.as_ref().to_glib_none().0))
+            from_glib_none(ffi::vte_terminal_search_get_regex(self.as_ref().to_glib_none().0))
         }
     }
 
     #[doc(alias = "vte_terminal_search_get_wrap_around")]
     fn search_get_wrap_around(&self) -> bool {
         unsafe {
-            from_glib(vte_terminal_search_get_wrap_around(self.as_ref().to_glib_none().0))
+            from_glib(ffi::vte_terminal_search_get_wrap_around(self.as_ref().to_glib_none().0))
         }
     }
 
-    // #[cfg_attr(feature = "v0_46", deprecated = "Since 0.46")]
-    // #[allow(deprecated)]
-    // #[doc(alias = "vte_terminal_search_set_gregex")]
-    // fn search_set_gregex(&self, gregex: Option<&glib::Regex>, gflags: glib::RegexMatchFlags) {
-    //     unsafe {
-    //         vte_terminal_search_set_gregex(self.as_ref().to_glib_none().0, gregex.to_glib_none().0, gflags.into_glib());
-    //     }
-    // }
+    //#[cfg_attr(feature = "v0_46", deprecated = "Since 0.46")]
+    //#[allow(deprecated)]
+    //#[doc(alias = "vte_terminal_search_set_gregex")]
+    //fn search_set_gregex(&self, gregex: /*Ignored*/Option<&glib::Regex>, gflags: /*Ignored*/glib::RegexMatchFlags) {
+    //    unsafe { TODO: call ffi:vte_terminal_search_set_gregex() }
+    //}
 
     #[cfg(feature = "v0_46")]
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
     #[doc(alias = "vte_terminal_search_set_regex")]
     fn search_set_regex(&self, regex: Option<&Regex>, flags: u32) {
         unsafe {
-            vte_terminal_search_set_regex(self.as_ref().to_glib_none().0, regex.to_glib_none().0, flags);
+            ffi::vte_terminal_search_set_regex(self.as_ref().to_glib_none().0, regex.to_glib_none().0, flags);
         }
     }
 
     #[doc(alias = "vte_terminal_search_set_wrap_around")]
     fn search_set_wrap_around(&self, wrap_around: bool) {
         unsafe {
-            vte_terminal_search_set_wrap_around(self.as_ref().to_glib_none().0, wrap_around.into_glib());
+            ffi::vte_terminal_search_set_wrap_around(self.as_ref().to_glib_none().0, wrap_around.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_select_all")]
     fn select_all(&self) {
         unsafe {
-            vte_terminal_select_all(self.as_ref().to_glib_none().0);
+            ffi::vte_terminal_select_all(self.as_ref().to_glib_none().0);
         }
     }
 
@@ -788,7 +776,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_allow_bold")]
     fn set_allow_bold(&self, allow_bold: bool) {
         unsafe {
-            vte_terminal_set_allow_bold(self.as_ref().to_glib_none().0, allow_bold.into_glib());
+            ffi::vte_terminal_set_allow_bold(self.as_ref().to_glib_none().0, allow_bold.into_glib());
         }
     }
 
@@ -797,21 +785,21 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_allow_hyperlink")]
     fn set_allow_hyperlink(&self, allow_hyperlink: bool) {
         unsafe {
-            vte_terminal_set_allow_hyperlink(self.as_ref().to_glib_none().0, allow_hyperlink.into_glib());
+            ffi::vte_terminal_set_allow_hyperlink(self.as_ref().to_glib_none().0, allow_hyperlink.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_audible_bell")]
     fn set_audible_bell(&self, is_audible: bool) {
         unsafe {
-            vte_terminal_set_audible_bell(self.as_ref().to_glib_none().0, is_audible.into_glib());
+            ffi::vte_terminal_set_audible_bell(self.as_ref().to_glib_none().0, is_audible.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_backspace_binding")]
     fn set_backspace_binding(&self, binding: EraseBinding) {
         unsafe {
-            vte_terminal_set_backspace_binding(self.as_ref().to_glib_none().0, binding.into_glib());
+            ffi::vte_terminal_set_backspace_binding(self.as_ref().to_glib_none().0, binding.into_glib());
         }
     }
 
@@ -820,7 +808,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_bold_is_bright")]
     fn set_bold_is_bright(&self, bold_is_bright: bool) {
         unsafe {
-            vte_terminal_set_bold_is_bright(self.as_ref().to_glib_none().0, bold_is_bright.into_glib());
+            ffi::vte_terminal_set_bold_is_bright(self.as_ref().to_glib_none().0, bold_is_bright.into_glib());
         }
     }
 
@@ -829,7 +817,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_cell_height_scale")]
     fn set_cell_height_scale(&self, scale: f64) {
         unsafe {
-            vte_terminal_set_cell_height_scale(self.as_ref().to_glib_none().0, scale);
+            ffi::vte_terminal_set_cell_height_scale(self.as_ref().to_glib_none().0, scale);
         }
     }
 
@@ -838,14 +826,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_cell_width_scale")]
     fn set_cell_width_scale(&self, scale: f64) {
         unsafe {
-            vte_terminal_set_cell_width_scale(self.as_ref().to_glib_none().0, scale);
+            ffi::vte_terminal_set_cell_width_scale(self.as_ref().to_glib_none().0, scale);
         }
     }
 
     #[doc(alias = "vte_terminal_set_cjk_ambiguous_width")]
     fn set_cjk_ambiguous_width(&self, width: i32) {
         unsafe {
-            vte_terminal_set_cjk_ambiguous_width(self.as_ref().to_glib_none().0, width);
+            ffi::vte_terminal_set_cjk_ambiguous_width(self.as_ref().to_glib_none().0, width);
         }
     }
 
@@ -854,28 +842,28 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_clear_background")]
     fn set_clear_background(&self, setting: bool) {
         unsafe {
-            vte_terminal_set_clear_background(self.as_ref().to_glib_none().0, setting.into_glib());
+            ffi::vte_terminal_set_clear_background(self.as_ref().to_glib_none().0, setting.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_color_background")]
     fn set_color_background(&self, background: &gdk::RGBA) {
         unsafe {
-            vte_terminal_set_color_background(self.as_ref().to_glib_none().0, background.to_glib_none().0);
+            ffi::vte_terminal_set_color_background(self.as_ref().to_glib_none().0, background.to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_set_color_bold")]
     fn set_color_bold(&self, bold: Option<&gdk::RGBA>) {
         unsafe {
-            vte_terminal_set_color_bold(self.as_ref().to_glib_none().0, bold.to_glib_none().0);
+            ffi::vte_terminal_set_color_bold(self.as_ref().to_glib_none().0, bold.to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_set_color_cursor")]
     fn set_color_cursor(&self, cursor_background: Option<&gdk::RGBA>) {
         unsafe {
-            vte_terminal_set_color_cursor(self.as_ref().to_glib_none().0, cursor_background.to_glib_none().0);
+            ffi::vte_terminal_set_color_cursor(self.as_ref().to_glib_none().0, cursor_background.to_glib_none().0);
         }
     }
 
@@ -884,28 +872,28 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_color_cursor_foreground")]
     fn set_color_cursor_foreground(&self, cursor_foreground: Option<&gdk::RGBA>) {
         unsafe {
-            vte_terminal_set_color_cursor_foreground(self.as_ref().to_glib_none().0, cursor_foreground.to_glib_none().0);
+            ffi::vte_terminal_set_color_cursor_foreground(self.as_ref().to_glib_none().0, cursor_foreground.to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_set_color_foreground")]
     fn set_color_foreground(&self, foreground: &gdk::RGBA) {
         unsafe {
-            vte_terminal_set_color_foreground(self.as_ref().to_glib_none().0, foreground.to_glib_none().0);
+            ffi::vte_terminal_set_color_foreground(self.as_ref().to_glib_none().0, foreground.to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_set_color_highlight")]
     fn set_color_highlight(&self, highlight_background: Option<&gdk::RGBA>) {
         unsafe {
-            vte_terminal_set_color_highlight(self.as_ref().to_glib_none().0, highlight_background.to_glib_none().0);
+            ffi::vte_terminal_set_color_highlight(self.as_ref().to_glib_none().0, highlight_background.to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_set_color_highlight_foreground")]
     fn set_color_highlight_foreground(&self, highlight_foreground: Option<&gdk::RGBA>) {
         unsafe {
-            vte_terminal_set_color_highlight_foreground(self.as_ref().to_glib_none().0, highlight_foreground.to_glib_none().0);
+            ffi::vte_terminal_set_color_highlight_foreground(self.as_ref().to_glib_none().0, highlight_foreground.to_glib_none().0);
         }
     }
 
@@ -913,35 +901,35 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     fn set_colors(&self, foreground: Option<&gdk::RGBA>, background: Option<&gdk::RGBA>, palette: &[gdk::RGBA]) {
         let palette_size = palette.len() as _;
         unsafe {
-            vte_terminal_set_colors(self.as_ref().to_glib_none().0, foreground.to_glib_none().0, background.to_glib_none().0, palette.to_glib_none().0, palette_size);
+            ffi::vte_terminal_set_colors(self.as_ref().to_glib_none().0, foreground.to_glib_none().0, background.to_glib_none().0, palette.to_glib_none().0, palette_size);
         }
     }
 
     #[doc(alias = "vte_terminal_set_cursor_blink_mode")]
     fn set_cursor_blink_mode(&self, mode: CursorBlinkMode) {
         unsafe {
-            vte_terminal_set_cursor_blink_mode(self.as_ref().to_glib_none().0, mode.into_glib());
+            ffi::vte_terminal_set_cursor_blink_mode(self.as_ref().to_glib_none().0, mode.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_cursor_shape")]
     fn set_cursor_shape(&self, shape: CursorShape) {
         unsafe {
-            vte_terminal_set_cursor_shape(self.as_ref().to_glib_none().0, shape.into_glib());
+            ffi::vte_terminal_set_cursor_shape(self.as_ref().to_glib_none().0, shape.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_default_colors")]
     fn set_default_colors(&self) {
         unsafe {
-            vte_terminal_set_default_colors(self.as_ref().to_glib_none().0);
+            ffi::vte_terminal_set_default_colors(self.as_ref().to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_set_delete_binding")]
     fn set_delete_binding(&self, binding: EraseBinding) {
         unsafe {
-            vte_terminal_set_delete_binding(self.as_ref().to_glib_none().0, binding.into_glib());
+            ffi::vte_terminal_set_delete_binding(self.as_ref().to_glib_none().0, binding.into_glib());
         }
     }
 
@@ -950,7 +938,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_enable_bidi")]
     fn set_enable_bidi(&self, enable_bidi: bool) {
         unsafe {
-            vte_terminal_set_enable_bidi(self.as_ref().to_glib_none().0, enable_bidi.into_glib());
+            ffi::vte_terminal_set_enable_bidi(self.as_ref().to_glib_none().0, enable_bidi.into_glib());
         }
     }
 
@@ -959,7 +947,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_enable_fallback_scrolling")]
     fn set_enable_fallback_scrolling(&self, enable: bool) {
         unsafe {
-            vte_terminal_set_enable_fallback_scrolling(self.as_ref().to_glib_none().0, enable.into_glib());
+            ffi::vte_terminal_set_enable_fallback_scrolling(self.as_ref().to_glib_none().0, enable.into_glib());
         }
     }
 
@@ -968,7 +956,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_enable_shaping")]
     fn set_enable_shaping(&self, enable_shaping: bool) {
         unsafe {
-            vte_terminal_set_enable_shaping(self.as_ref().to_glib_none().0, enable_shaping.into_glib());
+            ffi::vte_terminal_set_enable_shaping(self.as_ref().to_glib_none().0, enable_shaping.into_glib());
         }
     }
 
@@ -977,7 +965,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_enable_sixel")]
     fn set_enable_sixel(&self, enabled: bool) {
         unsafe {
-            vte_terminal_set_enable_sixel(self.as_ref().to_glib_none().0, enabled.into_glib());
+            ffi::vte_terminal_set_enable_sixel(self.as_ref().to_glib_none().0, enabled.into_glib());
         }
     }
 
@@ -986,8 +974,8 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_encoding")]
     fn set_encoding(&self, codeset: Option<&str>) -> Result<(), glib::Error> {
         unsafe {
-            let mut error = ptr::null_mut();
-            let is_ok = vte_terminal_set_encoding(self.as_ref().to_glib_none().0, codeset.to_glib_none().0, &mut error);
+            let mut error = std::ptr::null_mut();
+            let is_ok = ffi::vte_terminal_set_encoding(self.as_ref().to_glib_none().0, codeset.to_glib_none().0, &mut error);
             debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() { Ok(()) } else { Err(from_glib_full(error)) }
         }
@@ -996,7 +984,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_font")]
     fn set_font(&self, font_desc: Option<&pango::FontDescription>) {
         unsafe {
-            vte_terminal_set_font(self.as_ref().to_glib_none().0, font_desc.to_glib_none().0);
+            ffi::vte_terminal_set_font(self.as_ref().to_glib_none().0, font_desc.to_glib_none().0);
         }
     }
 
@@ -1010,7 +998,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_font_scale")]
     fn set_font_scale(&self, scale: f64) {
         unsafe {
-            vte_terminal_set_font_scale(self.as_ref().to_glib_none().0, scale);
+            ffi::vte_terminal_set_font_scale(self.as_ref().to_glib_none().0, scale);
         }
     }
 
@@ -1019,28 +1007,28 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_geometry_hints_for_window")]
     fn set_geometry_hints_for_window(&self, window: &impl IsA<gtk::Window>) {
         unsafe {
-            vte_terminal_set_geometry_hints_for_window(self.as_ref().to_glib_none().0, window.as_ref().to_glib_none().0);
+            ffi::vte_terminal_set_geometry_hints_for_window(self.as_ref().to_glib_none().0, window.as_ref().to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_set_input_enabled")]
     fn set_input_enabled(&self, enabled: bool) {
         unsafe {
-            vte_terminal_set_input_enabled(self.as_ref().to_glib_none().0, enabled.into_glib());
+            ffi::vte_terminal_set_input_enabled(self.as_ref().to_glib_none().0, enabled.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_mouse_autohide")]
     fn set_mouse_autohide(&self, setting: bool) {
         unsafe {
-            vte_terminal_set_mouse_autohide(self.as_ref().to_glib_none().0, setting.into_glib());
+            ffi::vte_terminal_set_mouse_autohide(self.as_ref().to_glib_none().0, setting.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_pty")]
     fn set_pty(&self, pty: Option<&Pty>) {
         unsafe {
-            vte_terminal_set_pty(self.as_ref().to_glib_none().0, pty.to_glib_none().0);
+            ffi::vte_terminal_set_pty(self.as_ref().to_glib_none().0, pty.to_glib_none().0);
         }
     }
 
@@ -1049,21 +1037,21 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_rewrap_on_resize")]
     fn set_rewrap_on_resize(&self, rewrap: bool) {
         unsafe {
-            vte_terminal_set_rewrap_on_resize(self.as_ref().to_glib_none().0, rewrap.into_glib());
+            ffi::vte_terminal_set_rewrap_on_resize(self.as_ref().to_glib_none().0, rewrap.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_scroll_on_keystroke")]
     fn set_scroll_on_keystroke(&self, scroll: bool) {
         unsafe {
-            vte_terminal_set_scroll_on_keystroke(self.as_ref().to_glib_none().0, scroll.into_glib());
+            ffi::vte_terminal_set_scroll_on_keystroke(self.as_ref().to_glib_none().0, scroll.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_scroll_on_output")]
     fn set_scroll_on_output(&self, scroll: bool) {
         unsafe {
-            vte_terminal_set_scroll_on_output(self.as_ref().to_glib_none().0, scroll.into_glib());
+            ffi::vte_terminal_set_scroll_on_output(self.as_ref().to_glib_none().0, scroll.into_glib());
         }
     }
 
@@ -1072,21 +1060,21 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_scroll_unit_is_pixels")]
     fn set_scroll_unit_is_pixels(&self, enable: bool) {
         unsafe {
-            vte_terminal_set_scroll_unit_is_pixels(self.as_ref().to_glib_none().0, enable.into_glib());
+            ffi::vte_terminal_set_scroll_unit_is_pixels(self.as_ref().to_glib_none().0, enable.into_glib());
         }
     }
 
     #[doc(alias = "vte_terminal_set_scrollback_lines")]
     fn set_scrollback_lines(&self, lines: libc::c_long) {
         unsafe {
-            vte_terminal_set_scrollback_lines(self.as_ref().to_glib_none().0, lines);
+            ffi::vte_terminal_set_scrollback_lines(self.as_ref().to_glib_none().0, lines);
         }
     }
 
     #[doc(alias = "vte_terminal_set_size")]
     fn set_size(&self, columns: libc::c_long, rows: libc::c_long) {
         unsafe {
-            vte_terminal_set_size(self.as_ref().to_glib_none().0, columns, rows);
+            ffi::vte_terminal_set_size(self.as_ref().to_glib_none().0, columns, rows);
         }
     }
 
@@ -1095,7 +1083,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_text_blink_mode")]
     fn set_text_blink_mode(&self, text_blink_mode: TextBlinkMode) {
         unsafe {
-            vte_terminal_set_text_blink_mode(self.as_ref().to_glib_none().0, text_blink_mode.into_glib());
+            ffi::vte_terminal_set_text_blink_mode(self.as_ref().to_glib_none().0, text_blink_mode.into_glib());
         }
     }
 
@@ -1104,7 +1092,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_word_char_exceptions")]
     fn set_word_char_exceptions(&self, exceptions: &str) {
         unsafe {
-            vte_terminal_set_word_char_exceptions(self.as_ref().to_glib_none().0, exceptions.to_glib_none().0);
+            ffi::vte_terminal_set_word_char_exceptions(self.as_ref().to_glib_none().0, exceptions.to_glib_none().0);
         }
     }
 
@@ -1120,7 +1108,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_xfill")]
     fn set_xfill(&self, fill: bool) {
         unsafe {
-            vte_terminal_set_xfill(self.as_ref().to_glib_none().0, fill.into_glib());
+            ffi::vte_terminal_set_xfill(self.as_ref().to_glib_none().0, fill.into_glib());
         }
     }
 
@@ -1136,7 +1124,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[doc(alias = "vte_terminal_set_yfill")]
     fn set_yfill(&self, fill: bool) {
         unsafe {
-            vte_terminal_set_yfill(self.as_ref().to_glib_none().0, fill.into_glib());
+            ffi::vte_terminal_set_yfill(self.as_ref().to_glib_none().0, fill.into_glib());
         }
     }
 
@@ -1155,7 +1143,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     //     }
     //     let child_setup = if child_setup_data.is_some() { Some(child_setup_func as _) } else { None };
     //     let callback_data: Box_<Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>> = Box_::new(callback);
-    //     unsafe extern "C" fn callback_func(terminal: *mut VteTerminal, pid: glib::GPid, error: *mut glib::GError, user_data: glib::ffi::gpointer) {
+    //     unsafe extern "C" fn callback_func(terminal: *mut ffi::VteTerminal, pid: glib::ffi::GPid, error: *mut glib::ffi::GError, user_data: glib::ffi::gpointer) {
     //         let terminal = from_glib_borrow(terminal);
     //         let pid = from_glib(pid);
     //         let error = from_glib_borrow(error);
@@ -1171,7 +1159,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     //     let super_callback0: Box_<Option<Box_<dyn Fn() + 'static>>> = child_setup_data;
     //     let super_callback1: Box_<Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>> = callback_data;
     //     unsafe {
-    //         vte_terminal_spawn_async(self.as_ref().to_glib_none().0, pty_flags.into_glib(), working_directory.to_glib_none().0, argv.to_glib_none().0, envv.to_glib_none().0, spawn_flags.into_glib(), child_setup, Box_::into_raw(super_callback0) as *mut _, destroy_call8, timeout, cancellable.to_glib_none().0, callback, Box_::into_raw(super_callback1) as *mut _);
+    //         ffi::vte_terminal_spawn_async(self.as_ref().to_glib_none().0, pty_flags.into_glib(), working_directory.to_glib_none().0, argv.to_glib_none().0, envv.to_glib_none().0, spawn_flags.into_glib(), child_setup, Box_::into_raw(super_callback0) as *mut _, destroy_call8, timeout, cancellable.to_glib_none().0, callback, Box_::into_raw(super_callback1) as *mut _);
     //     }
     // }
 
@@ -1191,9 +1179,9 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
         let child_setup = if child_setup_data.is_some() { Some(child_setup_func as _) } else { None };
         let super_callback0: &Option<&mut dyn (FnMut())> = &child_setup_data;
         unsafe {
-            let mut child_pid = mem::MaybeUninit::uninit();
-            let mut error = ptr::null_mut();
-            let is_ok = vte_terminal_spawn_sync(
+            let mut child_pid = std::mem::MaybeUninit::uninit();
+            let mut error = std::ptr::null_mut();
+            let is_ok = ffi::vte_terminal_spawn_sync(
                 self.as_ref().to_glib_none().0,
                 pty_flags.into_glib(),
                 working_directory.to_glib_none().0,
@@ -1211,62 +1199,62 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
         }
     }
 
-    #[cfg(feature = "v0_62")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "v0_62")))]
-    #[doc(alias = "vte_terminal_spawn_with_fds_async")]
-    fn spawn_with_fds_async(&self, pty_flags: PtyFlags, working_directory: Option<&str>, argv: &[&std::path::Path], envv: &[&std::path::Path], fds: &[i32], map_fds: &[i32], spawn_flags: glib::SpawnFlags, child_setup: Option<Box_<dyn Fn() + 'static>>, timeout: i32, cancellable: Option<&impl IsA<gio::Cancellable>>, callback: Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>) {
-        let n_fds = fds.len() as _;
-        let n_map_fds = map_fds.len() as _;
-        let child_setup_data: Box_<Option<Box_<dyn Fn() + 'static>>> = Box_::new(child_setup);
-        unsafe extern "C" fn child_setup_func(data: glib::ffi::gpointer) {
-            let callback: &Option<Box_<dyn Fn() + 'static>> = &*(data as *mut _);
-            if let Some(ref callback) = *callback {
-                callback()
-            } else {
-                panic!("cannot get closure...")
-            }
-        }
-        let child_setup = if child_setup_data.is_some() { Some(child_setup_func as _) } else { None };
-        let callback_data: Box_<Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>> = Box_::new(callback);
-        unsafe extern "C" fn callback_func(terminal: *mut VteTerminal, pid: glib::GPid, error: *mut glib::GError, user_data: glib::ffi::gpointer) {
-            let terminal = from_glib_borrow(terminal);
-            let pid = from_glib(pid);
-            let error = from_glib_borrow(error);
-            let callback: Box_<Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>> = Box_::from_raw(user_data as *mut _);
-            let callback = (*callback).expect("cannot get closure...");
-            callback(&terminal, pid, &error)
-        }
-        let callback = if callback_data.is_some() { Some(callback_func as _) } else { None };
-        unsafe extern "C" fn child_setup_data_destroy_func(data: glib::ffi::gpointer) {
-            let _callback: Box_<Option<Box_<dyn Fn() + 'static>>> = Box_::from_raw(data as *mut _);
-        }
-        let destroy_call12 = Some(child_setup_data_destroy_func as _);
-        let super_callback0: Box_<Option<Box_<dyn Fn() + 'static>>> = child_setup_data;
-        let super_callback1: Box_<Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>> = callback_data;
-        unsafe {
-            vte_terminal_spawn_with_fds_async(self.as_ref().to_glib_none().0, pty_flags.into_glib(), working_directory.to_glib_none().0, argv.to_glib_none().0, envv.to_glib_none().0, fds.to_glib_none().0, n_fds, map_fds.to_glib_none().0, n_map_fds, spawn_flags.into_glib(), child_setup, Box_::into_raw(super_callback0) as *mut _, destroy_call12, timeout, cancellable.to_glib_none().0, callback, Box_::into_raw(super_callback1) as *mut _);
-        }
-    }
+    // #[cfg(feature = "v0_62")]
+    // #[cfg_attr(docsrs, doc(cfg(feature = "v0_62")))]
+    // #[doc(alias = "vte_terminal_spawn_with_fds_async")]
+    // fn spawn_with_fds_async(&self, pty_flags: PtyFlags, working_directory: Option<&str>, argv: &[&std::path::Path], envv: &[&std::path::Path], fds: &[i32], map_fds: &[i32], spawn_flags: glib::SpawnFlags, child_setup: Option<Box_<dyn Fn() + 'static>>, timeout: i32, cancellable: Option<&impl IsA<gio::Cancellable>>, callback: Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>) {
+    //     let n_fds = fds.len() as _;
+    //     let n_map_fds = map_fds.len() as _;
+    //     let child_setup_data: Box_<Option<Box_<dyn Fn() + 'static>>> = Box_::new(child_setup);
+    //     unsafe extern "C" fn child_setup_func(data: glib::ffi::gpointer) {
+    //         let callback: &Option<Box_<dyn Fn() + 'static>> = &*(data as *mut _);
+    //         if let Some(ref callback) = *callback {
+    //             callback()
+    //         } else {
+    //             panic!("cannot get closure...")
+    //         }
+    //     }
+    //     let child_setup = if child_setup_data.is_some() { Some(child_setup_func as _) } else { None };
+    //     let callback_data: Box_<Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>> = Box_::new(callback);
+    //     unsafe extern "C" fn callback_func(terminal: *mut ffi::VteTerminal, pid: glib::ffi::GPid, error: *mut glib::ffi::GError, user_data: glib::ffi::gpointer) {
+    //         let terminal = from_glib_borrow(terminal);
+    //         let pid = from_glib(pid);
+    //         let error = from_glib_borrow(error);
+    //         let callback: Box_<Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>> = Box_::from_raw(user_data as *mut _);
+    //         let callback = (*callback).expect("cannot get closure...");
+    //         callback(&terminal, pid, &error)
+    //     }
+    //     let callback = if callback_data.is_some() { Some(callback_func as _) } else { None };
+    //     unsafe extern "C" fn child_setup_data_destroy_func(data: glib::ffi::gpointer) {
+    //         let _callback: Box_<Option<Box_<dyn Fn() + 'static>>> = Box_::from_raw(data as *mut _);
+    //     }
+    //     let destroy_call12 = Some(child_setup_data_destroy_func as _);
+    //     let super_callback0: Box_<Option<Box_<dyn Fn() + 'static>>> = child_setup_data;
+    //     let super_callback1: Box_<Option<Box_<dyn FnOnce(&Terminal, glib::Pid, &glib::Error) + 'static>>> = callback_data;
+    //     unsafe {
+    //         ffi::vte_terminal_spawn_with_fds_async(self.as_ref().to_glib_none().0, pty_flags.into_glib(), working_directory.to_glib_none().0, argv.to_glib_none().0, envv.to_glib_none().0, fds.to_glib_none().0, n_fds, map_fds.to_glib_none().0, n_map_fds, spawn_flags.into_glib(), child_setup, Box_::into_raw(super_callback0) as *mut _, destroy_call12, timeout, cancellable.to_glib_none().0, callback, Box_::into_raw(super_callback1) as *mut _);
+    //     }
+    // }
 
     #[doc(alias = "vte_terminal_unselect_all")]
     fn unselect_all(&self) {
         unsafe {
-            vte_terminal_unselect_all(self.as_ref().to_glib_none().0);
+            ffi::vte_terminal_unselect_all(self.as_ref().to_glib_none().0);
         }
     }
 
     #[doc(alias = "vte_terminal_watch_child")]
     fn watch_child(&self, child_pid: glib::Pid) {
         unsafe {
-            vte_terminal_watch_child(self.as_ref().to_glib_none().0, child_pid.0);
+            ffi::vte_terminal_watch_child(self.as_ref().to_glib_none().0, child_pid.0);
         }
     }
 
     #[doc(alias = "vte_terminal_write_contents_sync")]
     fn write_contents_sync(&self, stream: &impl IsA<gio::OutputStream>, flags: WriteFlags, cancellable: Option<&impl IsA<gio::Cancellable>>) -> Result<(), glib::Error> {
         unsafe {
-            let mut error = ptr::null_mut();
-            let is_ok = vte_terminal_write_contents_sync(self.as_ref().to_glib_none().0, stream.as_ref().to_glib_none().0, flags.into_glib(), cancellable.map(|p| p.as_ref()).to_glib_none().0, &mut error);
+            let mut error = std::ptr::null_mut();
+            let is_ok = ffi::vte_terminal_write_contents_sync(self.as_ref().to_glib_none().0, stream.as_ref().to_glib_none().0, flags.into_glib(), cancellable.map(|p| p.as_ref()).to_glib_none().0, &mut error);
             debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() { Ok(()) } else { Err(from_glib_full(error)) }
         }
@@ -1336,79 +1324,79 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
 
     #[doc(alias = "bell")]
     fn connect_bell<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn bell_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn bell_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"bell\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(bell_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(bell_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "char-size-changed")]
     fn connect_char_size_changed<F: Fn(&Self, u32, u32) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn char_size_changed_trampoline<P: IsA<Terminal>, F: Fn(&P, u32, u32) + 'static>(this: *mut VteTerminal, width: libc::c_uint, height: libc::c_uint, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn char_size_changed_trampoline<P: IsA<Terminal>, F: Fn(&P, u32, u32) + 'static>(this: *mut ffi::VteTerminal, width: libc::c_uint, height: libc::c_uint, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref(), width, height)
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"char-size-changed\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(char_size_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(char_size_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "child-exited")]
     fn connect_child_exited<F: Fn(&Self, i32) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn child_exited_trampoline<P: IsA<Terminal>, F: Fn(&P, i32) + 'static>(this: *mut VteTerminal, status: libc::c_int, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn child_exited_trampoline<P: IsA<Terminal>, F: Fn(&P, i32) + 'static>(this: *mut ffi::VteTerminal, status: libc::c_int, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref(), status)
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"child-exited\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(child_exited_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(child_exited_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "commit")]
     fn connect_commit<F: Fn(&Self, &str, u32) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn commit_trampoline<P: IsA<Terminal>, F: Fn(&P, &str, u32) + 'static>(this: *mut VteTerminal, text: *mut libc::c_char, size: libc::c_uint, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn commit_trampoline<P: IsA<Terminal>, F: Fn(&P, &str, u32) + 'static>(this: *mut ffi::VteTerminal, text: *mut libc::c_char, size: libc::c_uint, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref(), &glib::GString::from_glib_borrow(text), size)
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"commit\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(commit_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(commit_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "contents-changed")]
     fn connect_contents_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn contents_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn contents_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"contents-changed\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(contents_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(contents_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "copy-clipboard")]
     fn connect_copy_clipboard<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn copy_clipboard_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn copy_clipboard_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"copy-clipboard\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(copy_clipboard_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(copy_clipboard_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1418,93 +1406,93 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
 
     #[doc(alias = "current-directory-uri-changed")]
     fn connect_current_directory_uri_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn current_directory_uri_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn current_directory_uri_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"current-directory-uri-changed\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(current_directory_uri_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(current_directory_uri_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "current-file-uri-changed")]
     fn connect_current_file_uri_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn current_file_uri_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn current_file_uri_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"current-file-uri-changed\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(current_file_uri_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(current_file_uri_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "cursor-moved")]
     fn connect_cursor_moved<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn cursor_moved_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn cursor_moved_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"cursor-moved\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(cursor_moved_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(cursor_moved_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "decrease-font-size")]
     fn connect_decrease_font_size<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn decrease_font_size_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn decrease_font_size_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"decrease-font-size\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(decrease_font_size_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(decrease_font_size_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_60", deprecated = "Since 0.60")]
     #[doc(alias = "deiconify-window")]
     fn connect_deiconify_window<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn deiconify_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn deiconify_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"deiconify-window\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(deiconify_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(deiconify_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "encoding-changed")]
     fn connect_encoding_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn encoding_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn encoding_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"encoding-changed\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(encoding_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(encoding_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "eof")]
     fn connect_eof<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn eof_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn eof_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"eof\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(eof_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(eof_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1518,96 +1506,96 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(feature = "v0_54", deprecated = "Since 0.54")]
     #[doc(alias = "icon-title-changed")]
     fn connect_icon_title_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn icon_title_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn icon_title_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"icon-title-changed\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(icon_title_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(icon_title_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_60", deprecated = "Since 0.60")]
     #[doc(alias = "iconify-window")]
     fn connect_iconify_window<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn iconify_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn iconify_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"iconify-window\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(iconify_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(iconify_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "increase-font-size")]
     fn connect_increase_font_size<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn increase_font_size_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn increase_font_size_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"increase-font-size\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(increase_font_size_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(increase_font_size_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_60", deprecated = "Since 0.60")]
     #[doc(alias = "lower-window")]
     fn connect_lower_window<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn lower_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn lower_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"lower-window\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(lower_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(lower_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_60", deprecated = "Since 0.60")]
     #[doc(alias = "maximize-window")]
     fn connect_maximize_window<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn maximize_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn maximize_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"maximize-window\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(maximize_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(maximize_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_60", deprecated = "Since 0.60")]
     #[doc(alias = "move-window")]
     fn connect_move_window<F: Fn(&Self, u32, u32) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn move_window_trampoline<P: IsA<Terminal>, F: Fn(&P, u32, u32) + 'static>(this: *mut VteTerminal, x: libc::c_uint, y: libc::c_uint, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn move_window_trampoline<P: IsA<Terminal>, F: Fn(&P, u32, u32) + 'static>(this: *mut ffi::VteTerminal, x: libc::c_uint, y: libc::c_uint, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref(), x, y)
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"move-window\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(move_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(move_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "paste-clipboard")]
     fn connect_paste_clipboard<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn paste_clipboard_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn paste_clipboard_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"paste-clipboard\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(paste_clipboard_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(paste_clipboard_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1618,151 +1606,151 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(feature = "v0_60", deprecated = "Since 0.60")]
     #[doc(alias = "raise-window")]
     fn connect_raise_window<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn raise_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn raise_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"raise-window\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(raise_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(raise_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_60", deprecated = "Since 0.60")]
     #[doc(alias = "refresh-window")]
     fn connect_refresh_window<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn refresh_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn refresh_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"refresh-window\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(refresh_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(refresh_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "resize-window")]
     fn connect_resize_window<F: Fn(&Self, u32, u32) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn resize_window_trampoline<P: IsA<Terminal>, F: Fn(&P, u32, u32) + 'static>(this: *mut VteTerminal, width: libc::c_uint, height: libc::c_uint, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn resize_window_trampoline<P: IsA<Terminal>, F: Fn(&P, u32, u32) + 'static>(this: *mut ffi::VteTerminal, width: libc::c_uint, height: libc::c_uint, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref(), width, height)
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"resize-window\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(resize_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(resize_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_60", deprecated = "Since 0.60")]
     #[doc(alias = "restore-window")]
     fn connect_restore_window<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn restore_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn restore_window_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"restore-window\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(restore_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(restore_window_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "selection-changed")]
     fn connect_selection_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn selection_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn selection_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"selection-changed\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(selection_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(selection_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_66", deprecated = "Since 0.66")]
     #[doc(alias = "text-deleted")]
     fn connect_text_deleted<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn text_deleted_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn text_deleted_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"text-deleted\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(text_deleted_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(text_deleted_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_66", deprecated = "Since 0.66")]
     #[doc(alias = "text-inserted")]
     fn connect_text_inserted<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn text_inserted_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn text_inserted_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"text-inserted\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(text_inserted_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(text_inserted_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_66", deprecated = "Since 0.66")]
     #[doc(alias = "text-modified")]
     fn connect_text_modified<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn text_modified_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn text_modified_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"text-modified\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(text_modified_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(text_modified_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_66", deprecated = "Since 0.66")]
     #[doc(alias = "text-scrolled")]
     fn connect_text_scrolled<F: Fn(&Self, i32) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn text_scrolled_trampoline<P: IsA<Terminal>, F: Fn(&P, i32) + 'static>(this: *mut VteTerminal, delta: libc::c_int, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn text_scrolled_trampoline<P: IsA<Terminal>, F: Fn(&P, i32) + 'static>(this: *mut ffi::VteTerminal, delta: libc::c_int, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref(), delta)
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"text-scrolled\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(text_scrolled_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(text_scrolled_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "window-title-changed")]
     fn connect_window_title_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn window_title_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn window_title_changed_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"window-title-changed\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(window_title_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(window_title_changed_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_60", deprecated = "Since 0.60")]
     #[doc(alias = "allow-bold")]
     fn connect_allow_bold_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_allow_bold_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_allow_bold_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::allow-bold\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_allow_bold_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_allow_bold_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1770,40 +1758,40 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_50")))]
     #[doc(alias = "allow-hyperlink")]
     fn connect_allow_hyperlink_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_allow_hyperlink_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_allow_hyperlink_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::allow-hyperlink\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_allow_hyperlink_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_allow_hyperlink_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "audible-bell")]
     fn connect_audible_bell_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_audible_bell_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_audible_bell_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::audible-bell\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_audible_bell_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_audible_bell_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "backspace-binding")]
     fn connect_backspace_binding_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_backspace_binding_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_backspace_binding_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::backspace-binding\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_backspace_binding_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_backspace_binding_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1811,14 +1799,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
     #[doc(alias = "bold-is-bright")]
     fn connect_bold_is_bright_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_bold_is_bright_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_bold_is_bright_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::bold-is-bright\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_bold_is_bright_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_bold_is_bright_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1826,14 +1814,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
     #[doc(alias = "cell-height-scale")]
     fn connect_cell_height_scale_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_cell_height_scale_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_cell_height_scale_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::cell-height-scale\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_cell_height_scale_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_cell_height_scale_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1841,92 +1829,92 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
     #[doc(alias = "cell-width-scale")]
     fn connect_cell_width_scale_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_cell_width_scale_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_cell_width_scale_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::cell-width-scale\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_cell_width_scale_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_cell_width_scale_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "cjk-ambiguous-width")]
     fn connect_cjk_ambiguous_width_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_cjk_ambiguous_width_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_cjk_ambiguous_width_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::cjk-ambiguous-width\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_cjk_ambiguous_width_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_cjk_ambiguous_width_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "current-directory-uri")]
     fn connect_current_directory_uri_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_current_directory_uri_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_current_directory_uri_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::current-directory-uri\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_current_directory_uri_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_current_directory_uri_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "current-file-uri")]
     fn connect_current_file_uri_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_current_file_uri_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_current_file_uri_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::current-file-uri\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_current_file_uri_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_current_file_uri_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "cursor-blink-mode")]
     fn connect_cursor_blink_mode_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_cursor_blink_mode_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_cursor_blink_mode_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::cursor-blink-mode\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_cursor_blink_mode_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_cursor_blink_mode_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "cursor-shape")]
     fn connect_cursor_shape_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_cursor_shape_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_cursor_shape_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::cursor-shape\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_cursor_shape_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_cursor_shape_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "delete-binding")]
     fn connect_delete_binding_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_delete_binding_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_delete_binding_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::delete-binding\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_delete_binding_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_delete_binding_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1934,27 +1922,27 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_58")))]
     #[doc(alias = "enable-bidi")]
     fn connect_enable_bidi_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_enable_bidi_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_enable_bidi_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::enable-bidi\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_enable_bidi_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_enable_bidi_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "enable-fallback-scrolling")]
     fn connect_enable_fallback_scrolling_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_enable_fallback_scrolling_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_enable_fallback_scrolling_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::enable-fallback-scrolling\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_enable_fallback_scrolling_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_enable_fallback_scrolling_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1962,14 +1950,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_58")))]
     #[doc(alias = "enable-shaping")]
     fn connect_enable_shaping_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_enable_shaping_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_enable_shaping_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::enable-shaping\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_enable_shaping_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_enable_shaping_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -1977,41 +1965,41 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_62")))]
     #[doc(alias = "enable-sixel")]
     fn connect_enable_sixel_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_enable_sixel_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_enable_sixel_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::enable-sixel\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_enable_sixel_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_enable_sixel_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_54", deprecated = "Since 0.54")]
     #[doc(alias = "encoding")]
     fn connect_encoding_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_encoding_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_encoding_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::encoding\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_encoding_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_encoding_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "font-desc")]
     fn connect_font_desc_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_font_desc_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_font_desc_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::font-desc\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_font_desc_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_font_desc_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -2019,27 +2007,27 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_74")))]
     #[doc(alias = "font-options")]
     fn connect_font_options_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_font_options_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_font_options_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::font-options\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_font_options_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_font_options_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "font-scale")]
     fn connect_font_scale_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_font_scale_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_font_scale_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::font-scale\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_font_scale_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_font_scale_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -2047,107 +2035,107 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_50")))]
     #[doc(alias = "hyperlink-hover-uri")]
     fn connect_hyperlink_hover_uri_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_hyperlink_hover_uri_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_hyperlink_hover_uri_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::hyperlink-hover-uri\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_hyperlink_hover_uri_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_hyperlink_hover_uri_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_54", deprecated = "Since 0.54")]
     #[doc(alias = "icon-title")]
     fn connect_icon_title_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_icon_title_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_icon_title_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::icon-title\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_icon_title_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_icon_title_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "input-enabled")]
     fn connect_input_enabled_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_input_enabled_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_input_enabled_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::input-enabled\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_input_enabled_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_input_enabled_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "pointer-autohide")]
     fn connect_pointer_autohide_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_pointer_autohide_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_pointer_autohide_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::pointer-autohide\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_pointer_autohide_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_pointer_autohide_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "pty")]
     fn connect_pty_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_pty_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_pty_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::pty\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_pty_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_pty_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[cfg_attr(feature = "v0_58", deprecated = "Since 0.58")]
     #[doc(alias = "rewrap-on-resize")]
     fn connect_rewrap_on_resize_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_rewrap_on_resize_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_rewrap_on_resize_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::rewrap-on-resize\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_rewrap_on_resize_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_rewrap_on_resize_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "scroll-on-keystroke")]
     fn connect_scroll_on_keystroke_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_scroll_on_keystroke_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_scroll_on_keystroke_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::scroll-on-keystroke\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_scroll_on_keystroke_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_scroll_on_keystroke_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "scroll-on-output")]
     fn connect_scroll_on_output_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_scroll_on_output_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_scroll_on_output_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::scroll-on-output\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_scroll_on_output_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_scroll_on_output_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -2155,27 +2143,27 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_66")))]
     #[doc(alias = "scroll-unit-is-pixels")]
     fn connect_scroll_unit_is_pixels_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_scroll_unit_is_pixels_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_scroll_unit_is_pixels_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::scroll-unit-is-pixels\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_scroll_unit_is_pixels_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_scroll_unit_is_pixels_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "scrollback-lines")]
     fn connect_scrollback_lines_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_scrollback_lines_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_scrollback_lines_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::scrollback-lines\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_scrollback_lines_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_scrollback_lines_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -2183,27 +2171,27 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
     #[doc(alias = "text-blink-mode")]
     fn connect_text_blink_mode_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_text_blink_mode_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_text_blink_mode_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::text-blink-mode\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_text_blink_mode_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_text_blink_mode_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
     #[doc(alias = "window-title")]
     fn connect_window_title_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_window_title_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_window_title_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::window-title\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_window_title_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_window_title_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -2211,14 +2199,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_40")))]
     #[doc(alias = "word-char-exceptions")]
     fn connect_word_char_exceptions_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_word_char_exceptions_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_word_char_exceptions_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::word-char-exceptions\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_word_char_exceptions_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_word_char_exceptions_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -2226,14 +2214,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_76")))]
     #[doc(alias = "xalign")]
     fn connect_xalign_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_xalign_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_xalign_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::xalign\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_xalign_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_xalign_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -2241,14 +2229,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_76")))]
     #[doc(alias = "xfill")]
     fn connect_xfill_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_xfill_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_xfill_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::xfill\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_xfill_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_xfill_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -2256,14 +2244,14 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_76")))]
     #[doc(alias = "yalign")]
     fn connect_yalign_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_yalign_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_yalign_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::yalign\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_yalign_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_yalign_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 
@@ -2271,22 +2259,16 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     #[cfg_attr(docsrs, doc(cfg(feature = "v0_76")))]
     #[doc(alias = "yfill")]
     fn connect_yfill_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_yfill_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
+        unsafe extern "C" fn notify_yfill_trampoline<P: IsA<Terminal>, F: Fn(&P) + 'static>(this: *mut ffi::VteTerminal, _param_spec: glib::ffi::gpointer, f: glib::ffi::gpointer) {
             let f: &F = &*(f as *const F);
             f(Terminal::from_glib_borrow(this).unsafe_cast_ref())
         }
         unsafe {
             let f: Box_<F> = Box_::new(f);
             connect_raw(self.as_ptr() as *mut _, b"notify::yfill\0".as_ptr() as *const _,
-                Some(transmute::<_, unsafe extern "C" fn()>(notify_yfill_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
+                Some(std::mem::transmute::<_, unsafe extern "C" fn()>(notify_yfill_trampoline::<Self, F> as *const ())), Box_::into_raw(f))
         }
     }
 }
 
 impl<O: IsA<Terminal>> TerminalExt for O {}
-
-impl fmt::Display for Terminal {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str("Terminal")
-    }
-}

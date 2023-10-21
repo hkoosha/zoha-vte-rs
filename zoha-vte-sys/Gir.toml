@@ -1,5 +1,5 @@
 [options]
-library = "Zoha Vte"
+library = "Vte"
 version = "2.91"
 target_path = "."
 work_mode = "sys"

@@ -4,32 +4,32 @@
 // DO NOT EDIT
 #![allow(deprecated)]
 
+use zoha_vte_sys as ffi;
+
 use crate::{PtyFlags};
 use glib::{prelude::*,translate::*};
-use std::{fmt,mem,ptr};
 #[cfg(feature = "v0_48")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_48")))]
 use std::{boxed::Box as Box_,pin::Pin};
-use zoha_vte_sys::*;
 
 #[cfg(feature = "gio_v2_22")]
 #[cfg_attr(docsrs, doc(cfg(feature = "gio_v2_22")))]
 glib::wrapper! {
     #[doc(alias = "VtePty")]
-    pub struct Pty(Object<VtePty, VtePtyClass>) @implements gio::Initable;
+    pub struct Pty(Object<ffi::VtePty, ffi::VtePtyClass>) @implements gio::Initable;
 
     match fn {
-        type_ => || vte_pty_get_type(),
+        type_ => || ffi::vte_pty_get_type(),
     }
 }
 
 #[cfg(not(any(feature = "gio_v2_22")))]
 glib::wrapper! {
     #[doc(alias = "VtePty")]
-    pub struct Pty(Object<VtePty, VtePtyClass>);
+    pub struct Pty(Object<ffi::VtePty, ffi::VtePtyClass>);
 
     match fn {
-        type_ => || vte_pty_get_type(),
+        type_ => || ffi::vte_pty_get_type(),
     }
 }
 
@@ -39,8 +39,8 @@ impl Pty {
     pub fn foreign_sync(fd: i32, cancellable: Option<&impl IsA<gio::Cancellable>>) -> Result<Pty, glib::Error> {
         assert_initialized_main_thread!();
         unsafe {
-            let mut error = ptr::null_mut();
-            let ret = vte_pty_new_foreign_sync(fd, cancellable.map(|p| p.as_ref()).to_glib_none().0, &mut error);
+            let mut error = std::ptr::null_mut();
+            let ret = ffi::vte_pty_new_foreign_sync(fd, cancellable.map(|p| p.as_ref()).to_glib_none().0, &mut error);
             if error.is_null() { Ok(from_glib_full(ret)) } else { Err(from_glib_full(error)) }
         }
     }
@@ -49,8 +49,8 @@ impl Pty {
     pub fn new_sync(flags: PtyFlags, cancellable: Option<&impl IsA<gio::Cancellable>>) -> Result<Pty, glib::Error> {
         assert_initialized_main_thread!();
         unsafe {
-            let mut error = ptr::null_mut();
-            let ret = vte_pty_new_sync(flags.into_glib(), cancellable.map(|p| p.as_ref()).to_glib_none().0, &mut error);
+            let mut error = std::ptr::null_mut();
+            let ret = ffi::vte_pty_new_sync(flags.into_glib(), cancellable.map(|p| p.as_ref()).to_glib_none().0, &mut error);
             if error.is_null() { Ok(from_glib_full(ret)) } else { Err(from_glib_full(error)) }
         }
     }
@@ -58,7 +58,7 @@ impl Pty {
     #[doc(alias = "vte_pty_child_setup")]
     pub fn child_setup(&self) {
         unsafe {
-            vte_pty_child_setup(self.to_glib_none().0);
+            ffi::vte_pty_child_setup(self.to_glib_none().0);
         }
     }
 
@@ -67,7 +67,7 @@ impl Pty {
     #[doc(alias = "vte_pty_close")]
     pub fn close(&self) {
         unsafe {
-            vte_pty_close(self.to_glib_none().0);
+            ffi::vte_pty_close(self.to_glib_none().0);
         }
     }
 
@@ -75,7 +75,7 @@ impl Pty {
     #[doc(alias = "get_fd")]
     pub fn fd(&self) -> i32 {
         unsafe {
-            vte_pty_get_fd(self.to_glib_none().0)
+            ffi::vte_pty_get_fd(self.to_glib_none().0)
         }
     }
 
@@ -83,10 +83,10 @@ impl Pty {
     #[doc(alias = "get_size")]
     pub fn size(&self) -> Result<(i32, i32), glib::Error> {
         unsafe {
-            let mut rows = mem::MaybeUninit::uninit();
-            let mut columns = mem::MaybeUninit::uninit();
-            let mut error = ptr::null_mut();
-            let is_ok = vte_pty_get_size(self.to_glib_none().0, rows.as_mut_ptr(), columns.as_mut_ptr(), &mut error);
+            let mut rows = std::mem::MaybeUninit::uninit();
+            let mut columns = std::mem::MaybeUninit::uninit();
+            let mut error = std::ptr::null_mut();
+            let is_ok = ffi::vte_pty_get_size(self.to_glib_none().0, rows.as_mut_ptr(), columns.as_mut_ptr(), &mut error);
             debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() { Ok((rows.assume_init(), columns.assume_init())) } else { Err(from_glib_full(error)) }
         }
@@ -95,8 +95,8 @@ impl Pty {
     #[doc(alias = "vte_pty_set_size")]
     pub fn set_size(&self, rows: i32, columns: i32) -> Result<(), glib::Error> {
         unsafe {
-            let mut error = ptr::null_mut();
-            let is_ok = vte_pty_set_size(self.to_glib_none().0, rows, columns, &mut error);
+            let mut error = std::ptr::null_mut();
+            let is_ok = ffi::vte_pty_set_size(self.to_glib_none().0, rows, columns, &mut error);
             debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() { Ok(()) } else { Err(from_glib_full(error)) }
         }
@@ -105,66 +105,66 @@ impl Pty {
     #[doc(alias = "vte_pty_set_utf8")]
     pub fn set_utf8(&self, utf8: bool) -> Result<(), glib::Error> {
         unsafe {
-            let mut error = ptr::null_mut();
-            let is_ok = vte_pty_set_utf8(self.to_glib_none().0, utf8.into_glib(), &mut error);
+            let mut error = std::ptr::null_mut();
+            let is_ok = ffi::vte_pty_set_utf8(self.to_glib_none().0, utf8.into_glib(), &mut error);
             debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() { Ok(()) } else { Err(from_glib_full(error)) }
         }
     }
 
-   // #[cfg(feature = "v0_48")]
-   // #[cfg_attr(docsrs, doc(cfg(feature = "v0_48")))]
-   // #[doc(alias = "vte_pty_spawn_async")]
-   // pub fn spawn_async<P: FnOnce(Result<glib::Pid, glib::Error>) + 'static>(&self, working_directory: Option<&str>, argv: &[&std::path::Path], envv: &[&std::path::Path], spawn_flags: glib::SpawnFlags, timeout: i32, cancellable: Option<&impl IsA<gio::Cancellable>>, callback: P) {
-   //     
-   //             let main_context = glib::MainContext::ref_thread_default();
-   //             let is_main_context_owner = main_context.is_owner();
-   //             let has_acquired_main_context = (!is_main_context_owner)
-   //                 .then(|| main_context.acquire().ok())
-   //                 .flatten();
-   //             assert!(
-   //                 is_main_context_owner || has_acquired_main_context.is_some(),
-   //                 "Async operations only allowed if the thread is owning the MainContext"
-   //             );
-   //     
-   //     let user_data: Box_<glib::thread_guard::ThreadGuard<P>> = Box_::new(glib::thread_guard::ThreadGuard::new(callback));
-   //     unsafe extern "C" fn spawn_async_trampoline<P: FnOnce(Result<glib::Pid, glib::Error>) + 'static>(_source_object: *mut glib::gobject_ffi::GObject, res: *mut gio::ffi::GAsyncResult, user_data: glib::ffi::gpointer) {
-   //         let mut error = ptr::null_mut();
-   //         let mut child_pid = mem::MaybeUninit::uninit();
-   //         let _ = vte_pty_spawn_finish(_source_object as *mut _, res, child_pid.as_mut_ptr(), &mut error);
-   //         let result = if error.is_null() { Ok(from_glib(child_pid.assume_init())) } else { Err(from_glib_full(error)) };
-   //         let callback: Box_<glib::thread_guard::ThreadGuard<P>> = Box_::from_raw(user_data as *mut _);
-   //         let callback: P = callback.into_inner();
-   //         callback(result);
-   //     }
-   //     let callback = spawn_async_trampoline::<P>;
-   //     unsafe {
-   //         vte_pty_spawn_async(self.to_glib_none().0, working_directory.to_glib_none().0, argv.to_glib_none().0, envv.to_glib_none().0, spawn_flags.into_glib(), child_setup, child_setup_data.to_glib_none_mut().0, child_setup_data_destroy, timeout, cancellable.map(|p| p.as_ref()).to_glib_none().0, Some(callback), Box_::into_raw(user_data) as *mut _);
-   //     }
-   // }
+    // #[cfg(feature = "v0_48")]
+    // #[cfg_attr(docsrs, doc(cfg(feature = "v0_48")))]
+    // #[doc(alias = "vte_pty_spawn_async")]
+    // pub fn spawn_async<P: FnOnce(Result<glib::Pid, glib::Error>) + 'static>(&self, working_directory: Option<&str>, argv: &[&std::path::Path], envv: &[&std::path::Path], spawn_flags: glib::SpawnFlags, timeout: i32, cancellable: Option<&impl IsA<gio::Cancellable>>, callback: P) {
+    //
+    //             let main_context = glib::MainContext::ref_thread_default();
+    //             let is_main_context_owner = main_context.is_owner();
+    //             let has_acquired_main_context = (!is_main_context_owner)
+    //                 .then(|| main_context.acquire().ok())
+    //                 .flatten();
+    //             assert!(
+    //                 is_main_context_owner || has_acquired_main_context.is_some(),
+    //                 "Async operations only allowed if the thread is owning the MainContext"
+    //             );
+    //
+    //     let user_data: Box_<glib::thread_guard::ThreadGuard<P>> = Box_::new(glib::thread_guard::ThreadGuard::new(callback));
+    //     unsafe extern "C" fn spawn_async_trampoline<P: FnOnce(Result<glib::Pid, glib::Error>) + 'static>(_source_object: *mut glib::gobject_ffi::GObject, res: *mut gio::ffi::GAsyncResult, user_data: glib::ffi::gpointer) {
+    //         let mut error = std::ptr::null_mut();
+    //         let mut child_pid = std::mem::MaybeUninit::uninit();
+    //         let _ = ffi::vte_pty_spawn_finish(_source_object as *mut _, res, child_pid.as_mut_ptr(), &mut error);
+    //         let result = if error.is_null() { Ok(from_glib(child_pid.assume_init())) } else { Err(from_glib_full(error)) };
+    //         let callback: Box_<glib::thread_guard::ThreadGuard<P>> = Box_::from_raw(user_data as *mut _);
+    //         let callback: P = callback.into_inner();
+    //         callback(result);
+    //     }
+    //     let callback = spawn_async_trampoline::<P>;
+    //     unsafe {
+    //         ffi::vte_pty_spawn_async(self.to_glib_none().0, working_directory.to_glib_none().0, argv.to_glib_none().0, envv.to_glib_none().0, spawn_flags.into_glib(), child_setup, child_setup_data.to_glib_none_mut().0, child_setup_data_destroy, timeout, cancellable.map(|p| p.as_ref()).to_glib_none().0, Some(callback), Box_::into_raw(user_data) as *mut _);
+    //     }
+    // }
 
     
-    #[cfg(feature = "v0_48")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "v0_48")))]
-   // pub fn spawn_future(&self, working_directory: Option<&str>, argv: &[&std::path::Path], envv: &[&std::path::Path], spawn_flags: glib::SpawnFlags, timeout: i32) -> Pin<Box_<dyn std::future::Future<Output = Result<glib::Pid, glib::Error>> + 'static>> {
-
-   //     let working_directory = working_directory.map(ToOwned::to_owned);
-   //     let argv = argv.clone();
-   //     let envv = envv.map(ToOwned::to_owned);
-   //     Box_::pin(gio::GioFuture::new(self, move |obj, cancellable, send| {
-   //         obj.spawn_async(
-   //             working_directory.as_ref().map(::std::borrow::Borrow::borrow),
-   //             &argv,
-   //             envv.as_ref().map(::std::borrow::Borrow::borrow),
-   //             spawn_flags,
-   //             timeout,
-   //             Some(cancellable),
-   //             move |res| {
-   //                 send.resolve(res);
-   //             },
-   //         );
-   //     }))
-   // }
+    // #[cfg(feature = "v0_48")]
+    // #[cfg_attr(docsrs, doc(cfg(feature = "v0_48")))]
+    // pub fn spawn_future(&self, working_directory: Option<&str>, argv: &[&std::path::Path], envv: &[&std::path::Path], spawn_flags: glib::SpawnFlags, timeout: i32) -> Pin<Box_<dyn std::future::Future<Output = Result<glib::Pid, glib::Error>> + 'static>> {
+    //
+    //     let working_directory = working_directory.map(ToOwned::to_owned);
+    //     let argv = argv.clone();
+    //     let envv = envv.map(ToOwned::to_owned);
+    //     Box_::pin(gio::GioFuture::new(self, move |obj, cancellable, send| {
+    //         obj.spawn_async(
+    //             working_directory.as_ref().map(::std::borrow::Borrow::borrow),
+    //             &argv,
+    //             envv.as_ref().map(::std::borrow::Borrow::borrow),
+    //             spawn_flags,
+    //             timeout,
+    //             Some(cancellable),
+    //             move |res| {
+    //                 send.resolve(res);
+    //             },
+    //         );
+    //     }))
+    // }
 
     //#[cfg(feature = "v0_62")]
     //#[cfg_attr(docsrs, doc(cfg(feature = "v0_62")))]
@@ -175,11 +175,5 @@ impl Pty {
 
     pub fn flags(&self) -> PtyFlags {
         ObjectExt::property(self, "flags")
-    }
-}
-
-impl fmt::Display for Pty {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str("Pty")
     }
 }

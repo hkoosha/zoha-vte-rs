@@ -1,6 +1,6 @@
 [package]
 name = "zoha-vte"
-version = "0.4.1"
+version = "0.5.0"
 edition = "2021"
 authors = ["Koosha Hosseiny <i@koosha.io>"]
 description = "Temporary crate: updated version of https://github.com/antoyo/vte-rs, until that crate is updated."
@@ -22,7 +22,7 @@ gobject-sys = "0.18.0"
 atk = "0.18.0"
 libc = "0.2"
 
-zoha-vte-sys = { path = "../zoha-vte-sys", version = "0.4.1"}
+zoha-vte-sys = { path = "../zoha-vte-sys", version = "0.5.0"}
 
 [features]
 v0_40 = ["zoha-vte-sys/v0_40"]
@@ -31,3 +31,16 @@ v0_44 = ["v0_42", "zoha-vte-sys/v0_44"]
 v0_46 = ["v0_44", "zoha-vte-sys/v0_46"]
 v0_48 = ["v0_46", "zoha-vte-sys/v0_48"]
 v0_50 = ["v0_48", "zoha-vte-sys/v0_50"]
+v0_52 = ["v0_50", "zoha-vte-sys/v0_52"]
+v0_54 = ["v0_52", "zoha-vte-sys/v0_54"]
+v0_56 = ["v0_54", "zoha-vte-sys/v0_56"]
+v0_58 = ["v0_56", "zoha-vte-sys/v0_58"]
+v0_60 = ["v0_58", "zoha-vte-sys/v0_60"]
+v0_62 = ["v0_60", "zoha-vte-sys/v0_62"]
+v0_64 = ["v0_62", "zoha-vte-sys/v0_64"]
+v0_66 = ["v0_64", "zoha-vte-sys/v0_66"]
+v0_68 = ["v0_66", "zoha-vte-sys/v0_68"]
+v0_70 = ["v0_68", "zoha-vte-sys/v0_70"]
+v0_72 = ["v0_70", "zoha-vte-sys/v0_72"]
+v0_74 = ["v0_72", "zoha-vte-sys/v0_74"]
+v0_76 = ["v0_74", "zoha-vte-sys/v0_76"]

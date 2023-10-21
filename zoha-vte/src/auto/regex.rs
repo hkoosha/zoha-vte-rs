@@ -3,18 +3,18 @@
 // from ../gir-files
 // DO NOT EDIT
 
+use zoha_vte_sys as ffi;
+
 use glib::{translate::*};
-use std::{ptr};
-use zoha_vte_sys::*;
 
 glib::wrapper! {
     #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-    pub struct Regex(Shared<VteRegex>);
+    pub struct Regex(Shared<ffi::VteRegex>);
 
     match fn {
-        ref => |ptr| vte_regex_ref(ptr),
-        unref => |ptr| vte_regex_unref(ptr),
-        type_ => || vte_regex_get_type(),
+        ref => |ptr| ffi::vte_regex_ref(ptr),
+        unref => |ptr| ffi::vte_regex_unref(ptr),
+        type_ => || ffi::vte_regex_get_type(),
     }
 }
 
@@ -25,8 +25,8 @@ impl Regex {
         assert_initialized_main_thread!();
         let pattern_length = pattern.len() as _;
         unsafe {
-            let mut error = ptr::null_mut();
-            let ret = vte_regex_new_for_match(pattern.to_glib_none().0, pattern_length, flags, &mut error);
+            let mut error = std::ptr::null_mut();
+            let ret = ffi::vte_regex_new_for_match(pattern.to_glib_none().0, pattern_length, flags, &mut error);
             if error.is_null() { Ok(from_glib_full(ret)) } else { Err(from_glib_full(error)) }
         }
     }
@@ -37,8 +37,8 @@ impl Regex {
         assert_initialized_main_thread!();
         let pattern_length = pattern.len() as _;
         unsafe {
-            let mut error = ptr::null_mut();
-            let ret = vte_regex_new_for_search(pattern.to_glib_none().0, pattern_length, flags, &mut error);
+            let mut error = std::ptr::null_mut();
+            let ret = ffi::vte_regex_new_for_search(pattern.to_glib_none().0, pattern_length, flags, &mut error);
             if error.is_null() { Ok(from_glib_full(ret)) } else { Err(from_glib_full(error)) }
         }
     }
@@ -46,8 +46,8 @@ impl Regex {
     #[doc(alias = "vte_regex_jit")]
     pub fn jit(&self, flags: u32) -> Result<(), glib::Error> {
         unsafe {
-            let mut error = ptr::null_mut();
-            let is_ok = vte_regex_jit(self.to_glib_none().0, flags, &mut error);
+            let mut error = std::ptr::null_mut();
+            let is_ok = ffi::vte_regex_jit(self.to_glib_none().0, flags, &mut error);
             debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() { Ok(()) } else { Err(from_glib_full(error)) }
         }
@@ -58,8 +58,8 @@ impl Regex {
     #[doc(alias = "vte_regex_substitute")]
     pub fn substitute(&self, subject: &str, replacement: &str, flags: u32) -> Result<glib::GString, glib::Error> {
         unsafe {
-            let mut error = ptr::null_mut();
-            let ret = vte_regex_substitute(self.to_glib_none().0, subject.to_glib_none().0, replacement.to_glib_none().0, flags, &mut error);
+            let mut error = std::ptr::null_mut();
+            let ret = ffi::vte_regex_substitute(self.to_glib_none().0, subject.to_glib_none().0, replacement.to_glib_none().0, flags, &mut error);
             if error.is_null() { Ok(from_glib_full(ret)) } else { Err(from_glib_full(error)) }
         }
     }

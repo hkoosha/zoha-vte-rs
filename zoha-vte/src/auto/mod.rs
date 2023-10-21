@@ -34,7 +34,6 @@ mod flags;
 pub use self::flags::FeatureFlags;
 pub use self::flags::PtyFlags;
 
-#[doc(hidden)]
 pub mod traits {
     pub use super::terminal::TerminalExt;
 }

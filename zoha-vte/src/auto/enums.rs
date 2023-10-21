@@ -3,9 +3,9 @@
 // from ../gir-files
 // DO NOT EDIT
 
+use zoha_vte_sys as ffi;
+
 use glib::{prelude::*,translate::*};
-use std::{fmt};
-use zoha_vte_sys::*;
 
 #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[derive(Clone, Copy)]
@@ -22,53 +22,43 @@ pub enum CursorBlinkMode {
     __Unknown(i32),
 }
 
-impl fmt::Display for CursorBlinkMode {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "CursorBlinkMode::{}", match *self {
-            Self::System => "System",
-            Self::On => "On",
-            Self::Off => "Off",
-            _ => "Unknown",
-        })
-    }
-}
-
 #[doc(hidden)]
 impl IntoGlib for CursorBlinkMode {
-    type GlibType = VteCursorBlinkMode;
+    type GlibType = ffi::VteCursorBlinkMode;
 
     #[inline]
-fn into_glib(self) -> VteCursorBlinkMode {
+fn into_glib(self) -> ffi::VteCursorBlinkMode {
 match self {
-            Self::System => VTE_CURSOR_BLINK_SYSTEM,
-            Self::On => VTE_CURSOR_BLINK_ON,
-            Self::Off => VTE_CURSOR_BLINK_OFF,
+            Self::System => ffi::VTE_CURSOR_BLINK_SYSTEM,
+            Self::On => ffi::VTE_CURSOR_BLINK_ON,
+            Self::Off => ffi::VTE_CURSOR_BLINK_OFF,
             Self::__Unknown(value) => value,
 }
 }
 }
 
 #[doc(hidden)]
-impl FromGlib<VteCursorBlinkMode> for CursorBlinkMode {
+impl FromGlib<ffi::VteCursorBlinkMode> for CursorBlinkMode {
     #[inline]
-unsafe fn from_glib(value: VteCursorBlinkMode) -> Self {
+unsafe fn from_glib(value: ffi::VteCursorBlinkMode) -> Self {
         skip_assert_initialized!();
         
 match value {
-            VTE_CURSOR_BLINK_SYSTEM => Self::System,
-            VTE_CURSOR_BLINK_ON => Self::On,
-            VTE_CURSOR_BLINK_OFF => Self::Off,
+            ffi::VTE_CURSOR_BLINK_SYSTEM => Self::System,
+            ffi::VTE_CURSOR_BLINK_ON => Self::On,
+            ffi::VTE_CURSOR_BLINK_OFF => Self::Off,
             value => Self::__Unknown(value),
 }
 }
 }
 
 impl StaticType for CursorBlinkMode {
-    #[inline]
-    fn static_type() -> glib::Type {
-        unsafe { from_glib(vte_cursor_blink_mode_get_type()) }
-    }
-}
+                #[inline]
+    #[doc(alias = "vte_cursor_blink_mode_get_type")]
+   fn static_type() -> glib::Type {
+                    unsafe { from_glib(ffi::vte_cursor_blink_mode_get_type()) }
+                }
+            }
 
 impl glib::HasParamSpec for CursorBlinkMode {
                 type ParamSpec = glib::ParamSpecEnum;
@@ -76,7 +66,7 @@ impl glib::HasParamSpec for CursorBlinkMode {
                 type BuilderFn = fn(&str, Self) -> glib::ParamSpecEnumBuilder<Self>;
     
                 fn param_spec_builder() -> Self::BuilderFn {
-                    |name, default_value| Self::ParamSpec::builder_with_default(name, default_value)
+                    Self::ParamSpec::builder_with_default
                 }
 }
 
@@ -133,53 +123,43 @@ pub enum CursorShape {
     __Unknown(i32),
 }
 
-impl fmt::Display for CursorShape {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "CursorShape::{}", match *self {
-            Self::Block => "Block",
-            Self::Ibeam => "Ibeam",
-            Self::Underline => "Underline",
-            _ => "Unknown",
-        })
-    }
-}
-
 #[doc(hidden)]
 impl IntoGlib for CursorShape {
-    type GlibType = VteCursorShape;
+    type GlibType = ffi::VteCursorShape;
 
     #[inline]
-fn into_glib(self) -> VteCursorShape {
+fn into_glib(self) -> ffi::VteCursorShape {
 match self {
-            Self::Block => VTE_CURSOR_SHAPE_BLOCK,
-            Self::Ibeam => VTE_CURSOR_SHAPE_IBEAM,
-            Self::Underline => VTE_CURSOR_SHAPE_UNDERLINE,
+            Self::Block => ffi::VTE_CURSOR_SHAPE_BLOCK,
+            Self::Ibeam => ffi::VTE_CURSOR_SHAPE_IBEAM,
+            Self::Underline => ffi::VTE_CURSOR_SHAPE_UNDERLINE,
             Self::__Unknown(value) => value,
 }
 }
 }
 
 #[doc(hidden)]
-impl FromGlib<VteCursorShape> for CursorShape {
+impl FromGlib<ffi::VteCursorShape> for CursorShape {
     #[inline]
-unsafe fn from_glib(value: VteCursorShape) -> Self {
+unsafe fn from_glib(value: ffi::VteCursorShape) -> Self {
         skip_assert_initialized!();
         
 match value {
-            VTE_CURSOR_SHAPE_BLOCK => Self::Block,
-            VTE_CURSOR_SHAPE_IBEAM => Self::Ibeam,
-            VTE_CURSOR_SHAPE_UNDERLINE => Self::Underline,
+            ffi::VTE_CURSOR_SHAPE_BLOCK => Self::Block,
+            ffi::VTE_CURSOR_SHAPE_IBEAM => Self::Ibeam,
+            ffi::VTE_CURSOR_SHAPE_UNDERLINE => Self::Underline,
             value => Self::__Unknown(value),
 }
 }
 }
 
 impl StaticType for CursorShape {
-    #[inline]
-    fn static_type() -> glib::Type {
-        unsafe { from_glib(vte_cursor_shape_get_type()) }
-    }
-}
+                #[inline]
+    #[doc(alias = "vte_cursor_shape_get_type")]
+   fn static_type() -> glib::Type {
+                    unsafe { from_glib(ffi::vte_cursor_shape_get_type()) }
+                }
+            }
 
 impl glib::HasParamSpec for CursorShape {
                 type ParamSpec = glib::ParamSpecEnum;
@@ -187,7 +167,7 @@ impl glib::HasParamSpec for CursorShape {
                 type BuilderFn = fn(&str, Self) -> glib::ParamSpecEnumBuilder<Self>;
     
                 fn param_spec_builder() -> Self::BuilderFn {
-                    |name, default_value| Self::ParamSpec::builder_with_default(name, default_value)
+                    Self::ParamSpec::builder_with_default
                 }
 }
 
@@ -248,59 +228,47 @@ pub enum EraseBinding {
     __Unknown(i32),
 }
 
-impl fmt::Display for EraseBinding {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "EraseBinding::{}", match *self {
-            Self::Auto => "Auto",
-            Self::AsciiBackspace => "AsciiBackspace",
-            Self::AsciiDelete => "AsciiDelete",
-            Self::DeleteSequence => "DeleteSequence",
-            Self::Tty => "Tty",
-            _ => "Unknown",
-        })
-    }
-}
-
 #[doc(hidden)]
 impl IntoGlib for EraseBinding {
-    type GlibType = VteEraseBinding;
+    type GlibType = ffi::VteEraseBinding;
 
     #[inline]
-fn into_glib(self) -> VteEraseBinding {
+fn into_glib(self) -> ffi::VteEraseBinding {
 match self {
-            Self::Auto => VTE_ERASE_AUTO,
-            Self::AsciiBackspace => VTE_ERASE_ASCII_BACKSPACE,
-            Self::AsciiDelete => VTE_ERASE_ASCII_DELETE,
-            Self::DeleteSequence => VTE_ERASE_DELETE_SEQUENCE,
-            Self::Tty => VTE_ERASE_TTY,
+            Self::Auto => ffi::VTE_ERASE_AUTO,
+            Self::AsciiBackspace => ffi::VTE_ERASE_ASCII_BACKSPACE,
+            Self::AsciiDelete => ffi::VTE_ERASE_ASCII_DELETE,
+            Self::DeleteSequence => ffi::VTE_ERASE_DELETE_SEQUENCE,
+            Self::Tty => ffi::VTE_ERASE_TTY,
             Self::__Unknown(value) => value,
 }
 }
 }
 
 #[doc(hidden)]
-impl FromGlib<VteEraseBinding> for EraseBinding {
+impl FromGlib<ffi::VteEraseBinding> for EraseBinding {
     #[inline]
-unsafe fn from_glib(value: VteEraseBinding) -> Self {
+unsafe fn from_glib(value: ffi::VteEraseBinding) -> Self {
         skip_assert_initialized!();
         
 match value {
-            VTE_ERASE_AUTO => Self::Auto,
-            VTE_ERASE_ASCII_BACKSPACE => Self::AsciiBackspace,
-            VTE_ERASE_ASCII_DELETE => Self::AsciiDelete,
-            VTE_ERASE_DELETE_SEQUENCE => Self::DeleteSequence,
-            VTE_ERASE_TTY => Self::Tty,
+            ffi::VTE_ERASE_AUTO => Self::Auto,
+            ffi::VTE_ERASE_ASCII_BACKSPACE => Self::AsciiBackspace,
+            ffi::VTE_ERASE_ASCII_DELETE => Self::AsciiDelete,
+            ffi::VTE_ERASE_DELETE_SEQUENCE => Self::DeleteSequence,
+            ffi::VTE_ERASE_TTY => Self::Tty,
             value => Self::__Unknown(value),
 }
 }
 }
 
 impl StaticType for EraseBinding {
-    #[inline]
-    fn static_type() -> glib::Type {
-        unsafe { from_glib(vte_erase_binding_get_type()) }
-    }
-}
+                #[inline]
+    #[doc(alias = "vte_erase_binding_get_type")]
+   fn static_type() -> glib::Type {
+                    unsafe { from_glib(ffi::vte_erase_binding_get_type()) }
+                }
+            }
 
 impl glib::HasParamSpec for EraseBinding {
                 type ParamSpec = glib::ParamSpecEnum;
@@ -308,7 +276,7 @@ impl glib::HasParamSpec for EraseBinding {
                 type BuilderFn = fn(&str, Self) -> glib::ParamSpecEnumBuilder<Self>;
     
                 fn param_spec_builder() -> Self::BuilderFn {
-                    |name, default_value| Self::ParamSpec::builder_with_default(name, default_value)
+                    Self::ParamSpec::builder_with_default
                 }
 }
 
@@ -367,27 +335,15 @@ pub enum Format {
 
 #[cfg(feature = "v0_50")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_50")))]
-impl fmt::Display for Format {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Format::{}", match *self {
-            Self::Text => "Text",
-            Self::Html => "Html",
-            _ => "Unknown",
-        })
-    }
-}
-
-#[cfg(feature = "v0_50")]
-#[cfg_attr(docsrs, doc(cfg(feature = "v0_50")))]
 #[doc(hidden)]
 impl IntoGlib for Format {
-    type GlibType = VteFormat;
+    type GlibType = ffi::VteFormat;
 
     #[inline]
-fn into_glib(self) -> VteFormat {
+fn into_glib(self) -> ffi::VteFormat {
 match self {
-            Self::Text => VTE_FORMAT_TEXT,
-            Self::Html => VTE_FORMAT_HTML,
+            Self::Text => ffi::VTE_FORMAT_TEXT,
+            Self::Html => ffi::VTE_FORMAT_HTML,
             Self::__Unknown(value) => value,
 }
 }
@@ -396,14 +352,14 @@ match self {
 #[cfg(feature = "v0_50")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_50")))]
 #[doc(hidden)]
-impl FromGlib<VteFormat> for Format {
+impl FromGlib<ffi::VteFormat> for Format {
     #[inline]
-unsafe fn from_glib(value: VteFormat) -> Self {
+unsafe fn from_glib(value: ffi::VteFormat) -> Self {
         skip_assert_initialized!();
         
 match value {
-            VTE_FORMAT_TEXT => Self::Text,
-            VTE_FORMAT_HTML => Self::Html,
+            ffi::VTE_FORMAT_TEXT => Self::Text,
+            ffi::VTE_FORMAT_HTML => Self::Html,
             value => Self::__Unknown(value),
 }
 }
@@ -412,11 +368,12 @@ match value {
 #[cfg(feature = "v0_50")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_50")))]
 impl StaticType for Format {
-    #[inline]
-    fn static_type() -> glib::Type {
-        unsafe { from_glib(vte_format_get_type()) }
-    }
-}
+                #[inline]
+    #[doc(alias = "vte_format_get_type")]
+   fn static_type() -> glib::Type {
+                    unsafe { from_glib(ffi::vte_format_get_type()) }
+                }
+            }
 
 #[cfg(feature = "v0_50")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_50")))]
@@ -426,7 +383,7 @@ impl glib::HasParamSpec for Format {
                 type BuilderFn = fn(&str, Self) -> glib::ParamSpecEnumBuilder<Self>;
     
                 fn param_spec_builder() -> Self::BuilderFn {
-                    |name, default_value| Self::ParamSpec::builder_with_default(name, default_value)
+                    Self::ParamSpec::builder_with_default
                 }
 }
 
@@ -489,39 +446,29 @@ pub enum PtyError {
     __Unknown(i32),
 }
 
-impl fmt::Display for PtyError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "PtyError::{}", match *self {
-            Self::PtyHelperFailed => "PtyHelperFailed",
-            Self::Pty98Failed => "Pty98Failed",
-            _ => "Unknown",
-        })
-    }
-}
-
 #[doc(hidden)]
 impl IntoGlib for PtyError {
-    type GlibType = VtePtyError;
+    type GlibType = ffi::VtePtyError;
 
     #[inline]
-fn into_glib(self) -> VtePtyError {
+fn into_glib(self) -> ffi::VtePtyError {
 match self {
-            Self::PtyHelperFailed => VTE_PTY_ERROR_PTY_HELPER_FAILED,
-            Self::Pty98Failed => VTE_PTY_ERROR_PTY98_FAILED,
+            Self::PtyHelperFailed => ffi::VTE_PTY_ERROR_PTY_HELPER_FAILED,
+            Self::Pty98Failed => ffi::VTE_PTY_ERROR_PTY98_FAILED,
             Self::__Unknown(value) => value,
 }
 }
 }
 
 #[doc(hidden)]
-impl FromGlib<VtePtyError> for PtyError {
+impl FromGlib<ffi::VtePtyError> for PtyError {
     #[inline]
-unsafe fn from_glib(value: VtePtyError) -> Self {
+unsafe fn from_glib(value: ffi::VtePtyError) -> Self {
         skip_assert_initialized!();
         
 match value {
-            VTE_PTY_ERROR_PTY_HELPER_FAILED => Self::PtyHelperFailed,
-            VTE_PTY_ERROR_PTY98_FAILED => Self::Pty98Failed,
+            ffi::VTE_PTY_ERROR_PTY_HELPER_FAILED => Self::PtyHelperFailed,
+            ffi::VTE_PTY_ERROR_PTY98_FAILED => Self::Pty98Failed,
             value => Self::__Unknown(value),
 }
 }
@@ -532,7 +479,7 @@ impl glib::error::ErrorDomain for PtyError {
     fn domain() -> glib::Quark {
         skip_assert_initialized!();
         
-        unsafe { from_glib(vte_pty_error_quark()) }
+        unsafe { from_glib(ffi::vte_pty_error_quark()) }
     }
 
     #[inline]
@@ -551,11 +498,12 @@ impl glib::error::ErrorDomain for PtyError {
 }
 
 impl StaticType for PtyError {
-    #[inline]
-    fn static_type() -> glib::Type {
-        unsafe { from_glib(vte_pty_error_get_type()) }
-    }
-}
+                #[inline]
+    #[doc(alias = "vte_pty_error_get_type")]
+   fn static_type() -> glib::Type {
+                    unsafe { from_glib(ffi::vte_pty_error_get_type()) }
+                }
+            }
 
 impl glib::HasParamSpec for PtyError {
                 type ParamSpec = glib::ParamSpecEnum;
@@ -563,7 +511,7 @@ impl glib::HasParamSpec for PtyError {
                 type BuilderFn = fn(&str, Self) -> glib::ParamSpecEnumBuilder<Self>;
     
                 fn param_spec_builder() -> Self::BuilderFn {
-                    |name, default_value| Self::ParamSpec::builder_with_default(name, default_value)
+                    Self::ParamSpec::builder_with_default
                 }
 }
 
@@ -622,27 +570,15 @@ pub enum RegexError {
 
 #[cfg(feature = "v0_46")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
-impl fmt::Display for RegexError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "RegexError::{}", match *self {
-            Self::Incompatible => "Incompatible",
-            Self::NotSupported => "NotSupported",
-            _ => "Unknown",
-        })
-    }
-}
-
-#[cfg(feature = "v0_46")]
-#[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
 #[doc(hidden)]
 impl IntoGlib for RegexError {
-    type GlibType = VteRegexError;
+    type GlibType = ffi::VteRegexError;
 
     #[inline]
-fn into_glib(self) -> VteRegexError {
+fn into_glib(self) -> ffi::VteRegexError {
 match self {
-            Self::Incompatible => VTE_REGEX_ERROR_INCOMPATIBLE,
-            Self::NotSupported => VTE_REGEX_ERROR_NOT_SUPPORTED,
+            Self::Incompatible => ffi::VTE_REGEX_ERROR_INCOMPATIBLE,
+            Self::NotSupported => ffi::VTE_REGEX_ERROR_NOT_SUPPORTED,
             Self::__Unknown(value) => value,
 }
 }
@@ -651,14 +587,14 @@ match self {
 #[cfg(feature = "v0_46")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
 #[doc(hidden)]
-impl FromGlib<VteRegexError> for RegexError {
+impl FromGlib<ffi::VteRegexError> for RegexError {
     #[inline]
-unsafe fn from_glib(value: VteRegexError) -> Self {
+unsafe fn from_glib(value: ffi::VteRegexError) -> Self {
         skip_assert_initialized!();
         
 match value {
-            VTE_REGEX_ERROR_INCOMPATIBLE => Self::Incompatible,
-            VTE_REGEX_ERROR_NOT_SUPPORTED => Self::NotSupported,
+            ffi::VTE_REGEX_ERROR_INCOMPATIBLE => Self::Incompatible,
+            ffi::VTE_REGEX_ERROR_NOT_SUPPORTED => Self::NotSupported,
             value => Self::__Unknown(value),
 }
 }
@@ -671,7 +607,7 @@ impl glib::error::ErrorDomain for RegexError {
     fn domain() -> glib::Quark {
         skip_assert_initialized!();
         
-        unsafe { from_glib(vte_regex_error_quark()) }
+        unsafe { from_glib(ffi::vte_regex_error_quark()) }
     }
 
     #[inline]
@@ -692,11 +628,12 @@ impl glib::error::ErrorDomain for RegexError {
 #[cfg(feature = "v0_46")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
 impl StaticType for RegexError {
-    #[inline]
-    fn static_type() -> glib::Type {
-        unsafe { from_glib(vte_regex_error_get_type()) }
-    }
-}
+                #[inline]
+    #[doc(alias = "vte_regex_error_get_type")]
+   fn static_type() -> glib::Type {
+                    unsafe { from_glib(ffi::vte_regex_error_get_type()) }
+                }
+            }
 
 #[cfg(feature = "v0_46")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
@@ -706,7 +643,7 @@ impl glib::HasParamSpec for RegexError {
                 type BuilderFn = fn(&str, Self) -> glib::ParamSpecEnumBuilder<Self>;
     
                 fn param_spec_builder() -> Self::BuilderFn {
-                    |name, default_value| Self::ParamSpec::builder_with_default(name, default_value)
+                    Self::ParamSpec::builder_with_default
                 }
 }
 
@@ -777,31 +714,17 @@ pub enum TextBlinkMode {
 
 #[cfg(feature = "v0_52")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
-impl fmt::Display for TextBlinkMode {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "TextBlinkMode::{}", match *self {
-            Self::Never => "Never",
-            Self::Focused => "Focused",
-            Self::Unfocused => "Unfocused",
-            Self::Always => "Always",
-            _ => "Unknown",
-        })
-    }
-}
-
-#[cfg(feature = "v0_52")]
-#[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
 #[doc(hidden)]
 impl IntoGlib for TextBlinkMode {
-    type GlibType = VteTextBlinkMode;
+    type GlibType = ffi::VteTextBlinkMode;
 
     #[inline]
-fn into_glib(self) -> VteTextBlinkMode {
+fn into_glib(self) -> ffi::VteTextBlinkMode {
 match self {
-            Self::Never => VTE_TEXT_BLINK_NEVER,
-            Self::Focused => VTE_TEXT_BLINK_FOCUSED,
-            Self::Unfocused => VTE_TEXT_BLINK_UNFOCUSED,
-            Self::Always => VTE_TEXT_BLINK_ALWAYS,
+            Self::Never => ffi::VTE_TEXT_BLINK_NEVER,
+            Self::Focused => ffi::VTE_TEXT_BLINK_FOCUSED,
+            Self::Unfocused => ffi::VTE_TEXT_BLINK_UNFOCUSED,
+            Self::Always => ffi::VTE_TEXT_BLINK_ALWAYS,
             Self::__Unknown(value) => value,
 }
 }
@@ -810,16 +733,16 @@ match self {
 #[cfg(feature = "v0_52")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
 #[doc(hidden)]
-impl FromGlib<VteTextBlinkMode> for TextBlinkMode {
+impl FromGlib<ffi::VteTextBlinkMode> for TextBlinkMode {
     #[inline]
-unsafe fn from_glib(value: VteTextBlinkMode) -> Self {
+unsafe fn from_glib(value: ffi::VteTextBlinkMode) -> Self {
         skip_assert_initialized!();
         
 match value {
-            VTE_TEXT_BLINK_NEVER => Self::Never,
-            VTE_TEXT_BLINK_FOCUSED => Self::Focused,
-            VTE_TEXT_BLINK_UNFOCUSED => Self::Unfocused,
-            VTE_TEXT_BLINK_ALWAYS => Self::Always,
+            ffi::VTE_TEXT_BLINK_NEVER => Self::Never,
+            ffi::VTE_TEXT_BLINK_FOCUSED => Self::Focused,
+            ffi::VTE_TEXT_BLINK_UNFOCUSED => Self::Unfocused,
+            ffi::VTE_TEXT_BLINK_ALWAYS => Self::Always,
             value => Self::__Unknown(value),
 }
 }
@@ -828,11 +751,12 @@ match value {
 #[cfg(feature = "v0_52")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
 impl StaticType for TextBlinkMode {
-    #[inline]
-    fn static_type() -> glib::Type {
-        unsafe { from_glib(vte_text_blink_mode_get_type()) }
-    }
-}
+                #[inline]
+    #[doc(alias = "vte_text_blink_mode_get_type")]
+   fn static_type() -> glib::Type {
+                    unsafe { from_glib(ffi::vte_text_blink_mode_get_type()) }
+                }
+            }
 
 #[cfg(feature = "v0_52")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_52")))]
@@ -842,7 +766,7 @@ impl glib::HasParamSpec for TextBlinkMode {
                 type BuilderFn = fn(&str, Self) -> glib::ParamSpecEnumBuilder<Self>;
     
                 fn param_spec_builder() -> Self::BuilderFn {
-                    |name, default_value| Self::ParamSpec::builder_with_default(name, default_value)
+                    Self::ParamSpec::builder_with_default
                 }
 }
 
@@ -903,47 +827,39 @@ pub enum WriteFlags {
     __Unknown(i32),
 }
 
-impl fmt::Display for WriteFlags {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "WriteFlags::{}", match *self {
-            Self::Default => "Default",
-            _ => "Unknown",
-        })
-    }
-}
-
 #[doc(hidden)]
 impl IntoGlib for WriteFlags {
-    type GlibType = VteWriteFlags;
+    type GlibType = ffi::VteWriteFlags;
 
     #[inline]
-fn into_glib(self) -> VteWriteFlags {
+fn into_glib(self) -> ffi::VteWriteFlags {
 match self {
-            Self::Default => VTE_WRITE_DEFAULT,
+            Self::Default => ffi::VTE_WRITE_DEFAULT,
             Self::__Unknown(value) => value,
 }
 }
 }
 
 #[doc(hidden)]
-impl FromGlib<VteWriteFlags> for WriteFlags {
+impl FromGlib<ffi::VteWriteFlags> for WriteFlags {
     #[inline]
-unsafe fn from_glib(value: VteWriteFlags) -> Self {
+unsafe fn from_glib(value: ffi::VteWriteFlags) -> Self {
         skip_assert_initialized!();
         
 match value {
-            VTE_WRITE_DEFAULT => Self::Default,
+            ffi::VTE_WRITE_DEFAULT => Self::Default,
             value => Self::__Unknown(value),
 }
 }
 }
 
 impl StaticType for WriteFlags {
-    #[inline]
-    fn static_type() -> glib::Type {
-        unsafe { from_glib(vte_write_flags_get_type()) }
-    }
-}
+                #[inline]
+    #[doc(alias = "vte_write_flags_get_type")]
+   fn static_type() -> glib::Type {
+                    unsafe { from_glib(ffi::vte_write_flags_get_type()) }
+                }
+            }
 
 impl glib::HasParamSpec for WriteFlags {
                 type ParamSpec = glib::ParamSpecEnum;
@@ -951,7 +867,7 @@ impl glib::HasParamSpec for WriteFlags {
                 type BuilderFn = fn(&str, Self) -> glib::ParamSpecEnumBuilder<Self>;
     
                 fn param_spec_builder() -> Self::BuilderFn {
-                    |name, default_value| Self::ParamSpec::builder_with_default(name, default_value)
+                    Self::ParamSpec::builder_with_default
                 }
 }
 
