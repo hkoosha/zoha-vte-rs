@@ -1,6 +1,6 @@
 [package]
 name = "zoha-vte"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
 authors = ["Koosha Hosseiny <i@koosha.io>"]
 description = "Temporary crate: updated version of https://github.com/antoyo/vte-rs, until that crate is updated."
@@ -14,15 +14,15 @@ gdk = "0.18.0"
 gdk-sys = "0.18.0"
 gtk = "0.18.1"
 gtk-sys = "0.18.0"
-glib = "0.18.2"
+glib = "0.18.5"
 glib-sys = "0.18.1"
-gio = "0.18.2"
-pango = "0.18.0"
+gio = "0.18.4"
+pango = "0.18.3"
 gobject-sys = "0.18.0"
 atk = "0.18.0"
 libc = "0.2"
 
-zoha-vte-sys = { path = "../zoha-vte-sys", version = "0.5.0"}
+zoha-vte-sys = { path = "../zoha-vte-sys", version = "0.6.0"}
 
 [features]
 v0_40 = ["zoha-vte-sys/v0_40"]

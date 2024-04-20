@@ -3,9 +3,9 @@
 // from ../gir-files
 // DO NOT EDIT
 
-use zoha_vte_sys as ffi;
-
 use glib::{translate::*};
+
+use zoha_vte_sys as ffi;
 
 glib::wrapper! {
     #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]

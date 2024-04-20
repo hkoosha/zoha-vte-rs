@@ -3,9 +3,9 @@
 // from ../gir-files
 // DO NOT EDIT
 
-use zoha_vte_sys as ffi;
-
 use glib::{bitflags::bitflags,prelude::*,translate::*};
+
+use zoha_vte_sys as ffi;
 
 #[cfg(feature = "v0_62")]
 bitflags! {

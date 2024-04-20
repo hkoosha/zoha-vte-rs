@@ -4,8 +4,6 @@
 // DO NOT EDIT
 #![allow(deprecated)]
 
-use zoha_vte_sys as ffi;
-
 use crate::{CursorBlinkMode,CursorShape,EraseBinding,Pty,PtyFlags,WriteFlags};
 #[cfg(feature = "v0_46")]
 #[cfg_attr(docsrs, doc(cfg(feature = "v0_46")))]
@@ -18,6 +16,8 @@ use crate::{Format};
 use crate::{TextBlinkMode};
 use glib::{prelude::*,signal::{connect_raw, SignalHandlerId},translate::*};
 use std::{boxed::Box as Box_};
+
+use zoha_vte_sys as ffi;
 
 glib::wrapper! {
     #[doc(alias = "VteTerminal")]
@@ -104,8 +104,9 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
     // #[doc(alias = "vte_terminal_event_check_regex_simple")]
     // fn event_check_regex_simple(&self, event: &mut gdk::Event, regexes: &[&Regex], match_flags: u32) -> Option<Vec<glib::GString>> {
     //     unsafe {
+    //         let mut n_regexes = std::mem::MaybeUninit::uninit();
     //         let mut matches = Vec::<glib::GString>::uninitialized();
-    //         let ret = from_glib(ffi::vte_terminal_event_check_regex_simple(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, regexes.to_glib_none().0, regexes.len(), match_flags, matches.to_glib_none_mut().0));
+    //         let ret = from_glib(ffi::vte_terminal_event_check_regex_simple(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, regexes.to_glib_none().0, n_regexes.as_mut_ptr(), match_flags, matches.to_glib_none_mut().0));
     //         if ret { Some(matches) } else { None }
     //     }
     // }
@@ -1191,7 +1192,7 @@ pub trait TerminalExt: IsA<Terminal> + sealed::Sealed + 'static {
                 child_setup,
                 super_callback0 as *const _ as usize as *mut _,
                 child_pid.as_mut_ptr(),
-                cancellable.to_glib_none().0 as *const _ as usize as *mut _,
+                cancellable.to_glib_none().0.cast(),
                 &mut error
             );
             debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());

@@ -3,9 +3,9 @@
 // from ../gir-files
 // DO NOT EDIT
 
-use zoha_vte_sys as ffi;
-
 use glib::{prelude::*,translate::*};
+
+use zoha_vte_sys as ffi;
 
 #[derive(Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[derive(Clone, Copy)]
