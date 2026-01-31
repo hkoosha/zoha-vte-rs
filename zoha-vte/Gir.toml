@@ -1,28 +1,32 @@
 [options]
 library = "Vte"
 version = "2.91"
-work_mode = "normal"
-target_path = "."
-generate_safety_asserts = true
 deprecate_by_min_version = true
+generate_safety_asserts = true
+min_cfg_version = "3.4"
 single_version_file = true
+target_path = "."
+work_mode = "normal"
+generate_builder = true
+
 girs_directories = [
-    "../gir-files",
-    "../"
+    "../gir-files/",
+    "../local/vte/share/gir-1.0/",
 ]
 
 external_libraries = [
     "Atk",
-    "Gdk",
-    "Gio",
-    "Gtk",
+    "Cairo",
     "GLib",
     "GObject",
+    "Gdk",
+    "GdkPixbuf",
+    "Gio",
+    "Gtk",
     "Pango",
 ]
 
 generate = [
-    # "Vte.CharAttributes",
     "Vte.CursorBlinkMode",
     "Vte.CursorShape",
     "Vte.EraseBinding",
@@ -42,28 +46,47 @@ generate = [
 
 manual = [
     "Atk.ImplementorIface",
-    "Gdk.Cursor",
-    "Gdk.CursorType",
-    "Gdk.Event",
-    # "Gdk.Geometry",
-    "Gdk.RGBA",
-    "Gio.AsyncReadyCallback",
-    "Gio.AsyncResult",
-    "Gio.Cancellable",
-    "Gio.OutputStream",
-    "Gio.Initable",
+    "GLib.Bytes",
     "GLib.DestroyNotify",
     "GLib.Error",
     "GLib.Pid",
+    "GLib.SpawnChildSetupFunc",
     "GLib.SpawnError",
     "GLib.SpawnFlags",
-    "GLib.SpawnChildSetupFunc",
-    # "GLib.Regex",
-    # "GLib.RegexMatchFlags",
+    "GLib.Uri",
+    "GLib.Variant",
+    "GObject.InitiallyUnowned",
+    "GObject.Value",
+    "Gdk.Cursor",
+    "Gdk.CursorType",
+    "Gdk.Event",
+    "Gdk.RGBA",
+    "GdkPixbuf.Pixbuf",
+    "Gio.AsyncReadyCallback",
+    "Gio.AsyncResult",
+    "Gio.Cancellable",
+    "Gio.Initable",
+    "Gio.MenuModel",
+    "Gio.OutputStream",
+    "Gtk.Buildable",
+    "Gtk.Scrollable",
     "Gtk.Widget",
     "Gtk.Window",
-    "Gtk.Scrollable",
-    "Gtk.Buildable",
     "Pango.FontDescription",
-    "GObject.InitiallyUnowned",
+    "Vte.Align",
+    "Vte.EventContext",
+    "Vte.ProgressHint",
+    "Vte.Properties",
+    "Vte.PropertiesRegistry",
+    "Vte.PropertyFlags",
+    "Vte.PropertyId",
+    "Vte.PropertyType",
+    "Vte.SystemdContextExitCondition",
+    "Vte.SystemdContextOperation",
+    "Vte.SystemdContextType",
+    "Vte.SystemdPropertyId",
+    "Vte.Uuid",
+    "Vte.UuidFormat",
+    "cairo.FontOptions",
+    "cairo.Surface",
 ]

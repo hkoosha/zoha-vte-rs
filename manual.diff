@@ -1,0 +1,17 @@
+diff --git a/zoha-vte/src/auto/terminal.rs b/zoha-vte/src/auto/terminal.rs
+index de83e8f..60ee673 100644
+--- a/zoha-vte/src/auto/terminal.rs
++++ b/zoha-vte/src/auto/terminal.rs
+@@ -89,10 +89,10 @@ pub trait TerminalExt: IsA<Terminal> + 'static {
+     }
+ 
+     #[doc(alias = "vte_terminal_event_check_regex_simple")]
+-    fn event_check_regex_simple(&self, event: &mut gdk::Event, regexes: &[&Regex], match_flags: u32) -> Option<Vec<glib::GString>> {
++    fn event_check_regex_simple(&self, event: &mut gdk::Event, regexes: &[&Regex], match_flags: u32) -> Option<Vec::<glib::GString>> {
+         unsafe {
+             let mut n_regexes = std::mem::MaybeUninit::uninit();
+-            let mut matches = Vec<glib::GString>::uninitialized();
++            let mut matches = Vec::<glib::GString>::uninitialized();
+             let ret = from_glib(ffi::vte_terminal_event_check_regex_simple(self.as_ref().to_glib_none().0, event.to_glib_none_mut().0, regexes.to_glib_none().0, n_regexes.as_mut_ptr(), match_flags, matches.to_glib_none_mut().0));
+             if ret { Some(matches) } else { None }
+         }

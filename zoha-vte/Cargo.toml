@@ -1,46 +1,31 @@
 [package]
 name = "zoha-vte"
-version = "0.6.0"
-edition = "2021"
-authors = ["Koosha Hosseiny <i@koosha.io>"]
-description = "Temporary crate: updated version of https://github.com/antoyo/vte-rs, until that crate is updated."
+version = "0.7.0"
+edition = "2024"
+authors = ["Koosha Hosseiny <git@koosha.io>"]
+description = "GTK VTE bindings for rust"
 homepage = "https://github.com/hkoosha/zoha-vte-rs"
 license = "GPL-3.0"
 readme = "README.md"
 
 [dependencies]
-bitflags = "1.2.1"
-gdk = "0.18.0"
-gdk-sys = "0.18.0"
-gtk = "0.18.1"
-gtk-sys = "0.18.0"
-glib = "0.18.5"
-glib-sys = "0.18.1"
-gio = "0.18.4"
-pango = "0.18.3"
-gobject-sys = "0.18.0"
-atk = "0.18.0"
 libc = "0.2"
+bitflags = "1.3.2"
 
-zoha-vte-sys = { path = "../zoha-vte-sys", version = "0.6.0"}
+cairo-rs = "0.21.5"
+cairo-sys-rs = "0.21.5"
+gdk-pixbuf = "0.21.5"
+gdk-pixbuf-sys = "0.21.5"
+gdk = "0.18.2"
+gdk-sys = "0.18.2"
+gio = "0.21.5"
+gio-sys = "0.21.5"
+glib = "0.21.5"
+glib-sys = "0.21.5"
+gobject-sys = "0.21.5"
+gtk = "0.18.2"
+gtk-sys = "0.18.2"
+pango = "0.21.5"
+pango-sys = "0.21.5"
 
-[features]
-v0_40 = ["zoha-vte-sys/v0_40"]
-v0_42 = ["v0_40", "zoha-vte-sys/v0_42"]
-v0_44 = ["v0_42", "zoha-vte-sys/v0_44"]
-v0_46 = ["v0_44", "zoha-vte-sys/v0_46"]
-v0_48 = ["v0_46", "zoha-vte-sys/v0_48"]
-v0_50 = ["v0_48", "zoha-vte-sys/v0_50"]
-v0_52 = ["v0_50", "zoha-vte-sys/v0_52"]
-v0_54 = ["v0_52", "zoha-vte-sys/v0_54"]
-v0_56 = ["v0_54", "zoha-vte-sys/v0_56"]
-v0_58 = ["v0_56", "zoha-vte-sys/v0_58"]
-v0_60 = ["v0_58", "zoha-vte-sys/v0_60"]
-v0_62 = ["v0_60", "zoha-vte-sys/v0_62"]
-v0_64 = ["v0_62", "zoha-vte-sys/v0_64"]
-v0_66 = ["v0_64", "zoha-vte-sys/v0_66"]
-v0_68 = ["v0_66", "zoha-vte-sys/v0_68"]
-v0_70 = ["v0_68", "zoha-vte-sys/v0_70"]
-v0_72 = ["v0_70", "zoha-vte-sys/v0_72"]
-v0_74 = ["v0_72", "zoha-vte-sys/v0_74"]
-v0_76 = ["v0_74", "zoha-vte-sys/v0_76"]
+zoha-vte-sys = { path = "../zoha-vte-sys", version = "0.7.0"}

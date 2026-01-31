@@ -1,0 +1,13 @@
+diff --git a/zoha-vte-sys/src/lib.rs b/zoha-vte-sys/src/lib.rs
+index 80d0a5d..f5b0376 100644
+--- a/zoha-vte-sys/src/lib.rs
++++ b/zoha-vte-sys/src/lib.rs
+@@ -197,7 +197,7 @@ pub const VTE_TEST_FLAGS_ALL: u64 = 18446744073709551615;
+ pub const VTE_TEST_FLAGS_NONE: u64 = 0;
+ 
+ // Flags
+-pub type VteFeatureFlags = c_uint;
++pub type VteFeatureFlags = c_ulong;
+ pub const VTE_FEATURE_FLAG_BIDI: VteFeatureFlags = 1;
+ pub const VTE_FEATURE_FLAG_ICU: VteFeatureFlags = 2;
+ pub const VTE_FEATURE_FLAG_SYSTEMD: VteFeatureFlags = 4;

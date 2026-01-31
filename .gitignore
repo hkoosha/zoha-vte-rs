@@ -2,3 +2,17 @@
 target/
 Cargo.lock
 **/*.rs.bk
+
+/local/
+
+# Only including c headers and pkg-config files, and only for gtk3.
+/vte/**
+!/vte/include/
+!/vte/include/vte-2.91/
+!/vte/include/vte-2.91/**
+
+#!/vte/lib/
+#!/vte/lib/pkgconfig/
+#!/vte/lib/pkgconfig/vte-2.91.pc
+#!/vte/lib/libvte-2.91.so*
+
