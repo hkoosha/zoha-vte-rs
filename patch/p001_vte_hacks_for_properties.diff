@@ -1,0 +1,30 @@
+diff --git a/vte/share/gir-1.0/Vte-2.91.gir b/vte/share/gir-1.0/Vte-2.91.gir
+index 6cafcca..ba1f3d6 100644
+--- a/vte/share/gir-1.0/Vte-2.91.gir
++++ b/vte/share/gir-1.0/Vte-2.91.gir
+@@ -478,6 +478,9 @@ should be copied to the clipboard in.</doc>
+             c:type="VteProperties"
+             disguised="1"
+             opaque="1"
++            glib:type-name="VteProperties"
++            glib:get-type="vte_properties_get_type"
++            c:symbol-prefix="properties"
+             version="0.86">
+       <doc xml:space="preserve"
+            filename="src/vteproperties.cc"
+@@ -13122,13 +13125,13 @@ property @target_name.</doc>
+         </parameter>
+       </parameters>
+     </function>
+-    <function name="properties_get_type"
++    <!--<function name="properties_get_type"
+               c:identifier="vte_properties_get_type">
+       <source-position filename="src/vte/vteproperties.h" line="69"/>
+       <return-value transfer-ownership="none">
+         <type name="GType" c:type="GType"/>
+       </return-value>
+-    </function>
++    </function>-->
+     <function name="pty_error_quark"
+               c:identifier="vte_pty_error_quark"
+               moved-to="PtyError.quark">

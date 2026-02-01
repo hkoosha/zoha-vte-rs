@@ -1,0 +1,14 @@
+diff --git a/zoha-vte-sys/build.rs b/zoha-vte-sys/build.rs
+index f0f8a13..9013e44 100644
+--- a/zoha-vte-sys/build.rs
++++ b/zoha-vte-sys/build.rs
+@@ -8,9 +8,4 @@ fn main() {
+         // prevent linking libraries to avoid documentation failure
+         return;
+     }
+-
+-    if let Err(s) = system_deps::Config::new().probe() {
+-        println!("cargo:warning={s}");
+-        std::process::exit(1);
+-    }
+ }

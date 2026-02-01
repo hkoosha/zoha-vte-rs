@@ -1,0 +1,15 @@
+diff --git a/zoha-vte-sys/src/lib.rs b/zoha-vte-sys/src/lib.rs
+index c77b23b..e16e1cd 100644
+--- a/zoha-vte-sys/src/lib.rs
++++ b/zoha-vte-sys/src/lib.rs
+@@ -105,6 +105,10 @@ pub type VteRegexError = c_int;
+ pub const VTE_REGEX_ERROR_INCOMPATIBLE: VteRegexError = 2147483646;
+ pub const VTE_REGEX_ERROR_NOT_SUPPORTED: VteRegexError = 2147483647;
+ 
++pub type VteSystemdContextOperation = c_int;
++pub const VTE_SYSTEMD_CONTEXT_OPERATION_START: VteSystemdContextOperation = 1;
++pub const VTE_SYSTEMD_CONTEXT_OPERATION_END: VteSystemdContextOperation = 2;
++
+ pub type VteTextBlinkMode = c_int;
+ pub const VTE_TEXT_BLINK_NEVER: VteTextBlinkMode = 0;
+ pub const VTE_TEXT_BLINK_FOCUSED: VteTextBlinkMode = 1;

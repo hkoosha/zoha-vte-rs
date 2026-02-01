@@ -7,9 +7,14 @@ Cargo.lock
 
 # Only including c headers and pkg-config files, and only for gtk3.
 /vte/**
+
 !/vte/include/
 !/vte/include/vte-2.91/
 !/vte/include/vte-2.91/**
+
+!/vte/share
+!/vte/share/gir-1.0/
+!/vte/share/gir-1.0/Vte-2.91.gir
 
 #!/vte/lib/
 #!/vte/lib/pkgconfig/

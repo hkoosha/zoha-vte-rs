@@ -1,0 +1,33 @@
+diff --git a/vte/share/gir-1.0/Vte-2.91.gir b/vte/share/gir-1.0/Vte-2.91.gir
+index e657a5c..730be5a 100644
+--- a/vte/share/gir-1.0/Vte-2.91.gir
++++ b/vte/share/gir-1.0/Vte-2.91.gir
+@@ -8381,7 +8381,7 @@ termprop by ID. See that function for more information.</doc>
+           </parameter>
+         </parameters>
+       </method>
+-      <method name="ref_termprop_uri"
++      <!--<method name="ref_termprop_uri"
+               c:identifier="vte_terminal_ref_termprop_uri"
+               version="0.78">
+         <doc xml:space="preserve"
+@@ -8409,8 +8409,8 @@ termprop by ID. See that function for more information.</doc>
+             <type name="utf8" c:type="const char*"/>
+           </parameter>
+         </parameters>
+-      </method>
+-      <method name="ref_termprop_uri_by_id"
++      </method>-->
++      <!--<method name="ref_termprop_uri_by_id"
+               c:identifier="vte_terminal_ref_termprop_uri_by_id"
+               version="0.78">
+         <doc xml:space="preserve"
+@@ -8438,7 +8438,7 @@ by ID. See that function for more information.</doc>
+             <type name="gint" c:type="int"/>
+           </parameter>
+         </parameters>
+-      </method>
++      </method>-->
+       <method name="ref_termprop_variant"
+               c:identifier="vte_terminal_ref_termprop_variant"
+               version="0.78">
