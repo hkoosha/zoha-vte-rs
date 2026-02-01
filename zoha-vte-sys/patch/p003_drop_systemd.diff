@@ -1,0 +1,298 @@
+diff --git a/zoha-vte-sys/src/lib.rs b/zoha-vte-sys/src/lib.rs
+index c7f3239..9c5bc58 100644
+--- a/zoha-vte-sys/src/lib.rs
++++ b/zoha-vte-sys/src/lib.rs
+@@ -105,51 +105,6 @@ pub type VteRegexError = c_int;
+ pub const VTE_REGEX_ERROR_INCOMPATIBLE: VteRegexError = 2147483646;
+ pub const VTE_REGEX_ERROR_NOT_SUPPORTED: VteRegexError = 2147483647;
+ 
+-pub type VteSystemdContextExitCondition = c_int;
+-pub const VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_SUCCESS: VteSystemdContextExitCondition = 0;
+-pub const VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_CRASH: VteSystemdContextExitCondition = 1;
+-pub const VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_FAILURE: VteSystemdContextExitCondition = 2;
+-pub const VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_INTERRUPT: VteSystemdContextExitCondition = 3;
+-
+-pub type VteSystemdContextOperation = c_int;
+-pub const VTE_SYSTEMD_CONTEXT_OPERATION_START: VteSystemdContextOperation = 1;
+-pub const VTE_SYSTEMD_CONTEXT_OPERATION_END: VteSystemdContextOperation = 2;
+-
+-pub type VteSystemdContextType = c_int;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_BUILTIN: VteSystemdContextType = 0;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_APP: VteSystemdContextType = 1;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_BOOT: VteSystemdContextType = 2;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_CHPRIV: VteSystemdContextType = 3;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_COMMAND: VteSystemdContextType = 4;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_CONTAINER: VteSystemdContextType = 5;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_ELEVATE: VteSystemdContextType = 6;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_REMOTE: VteSystemdContextType = 7;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_SERVICE: VteSystemdContextType = 8;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_SESSION: VteSystemdContextType = 9;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_SHELL: VteSystemdContextType = 10;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_SUBCONTEXT: VteSystemdContextType = 11;
+-pub const VTE_SYSTEMD_CONTEXT_TYPE_VM: VteSystemdContextType = 12;
+-
+-pub type VteSystemdPropertyId = c_int;
+-pub const VTE_SYSTEMD_PROPERTY_ID_CONTEXT_ID: VteSystemdPropertyId = 0;
+-pub const VTE_SYSTEMD_PROPERTY_ID_BOOT_ID: VteSystemdPropertyId = 1;
+-pub const VTE_SYSTEMD_PROPERTY_ID_COMM: VteSystemdPropertyId = 2;
+-pub const VTE_SYSTEMD_PROPERTY_ID_COMMAND_LINE: VteSystemdPropertyId = 3;
+-pub const VTE_SYSTEMD_PROPERTY_ID_CONTAINER: VteSystemdPropertyId = 4;
+-pub const VTE_SYSTEMD_PROPERTY_ID_CONTEXT_TYPE: VteSystemdPropertyId = 5;
+-pub const VTE_SYSTEMD_PROPERTY_ID_CURRENT_DIRECTORY: VteSystemdPropertyId = 6;
+-pub const VTE_SYSTEMD_PROPERTY_ID_EXIT_CONDITION: VteSystemdPropertyId = 7;
+-pub const VTE_SYSTEMD_PROPERTY_ID_EXIT_SIGNAL: VteSystemdPropertyId = 8;
+-pub const VTE_SYSTEMD_PROPERTY_ID_EXIT_STATUS: VteSystemdPropertyId = 9;
+-pub const VTE_SYSTEMD_PROPERTY_ID_HOSTNAME: VteSystemdPropertyId = 10;
+-pub const VTE_SYSTEMD_PROPERTY_ID_MACHINE_ID: VteSystemdPropertyId = 11;
+-pub const VTE_SYSTEMD_PROPERTY_ID_PID: VteSystemdPropertyId = 12;
+-pub const VTE_SYSTEMD_PROPERTY_ID_PIDFD_INODE: VteSystemdPropertyId = 13;
+-pub const VTE_SYSTEMD_PROPERTY_ID_TARGET_HOST: VteSystemdPropertyId = 14;
+-pub const VTE_SYSTEMD_PROPERTY_ID_TARGET_USER: VteSystemdPropertyId = 15;
+-pub const VTE_SYSTEMD_PROPERTY_ID_USER: VteSystemdPropertyId = 16;
+-pub const VTE_SYSTEMD_PROPERTY_ID_VM: VteSystemdPropertyId = 17;
+-
+ pub type VteTextBlinkMode = c_int;
+ pub const VTE_TEXT_BLINK_NEVER: VteTextBlinkMode = 0;
+ pub const VTE_TEXT_BLINK_FOCUSED: VteTextBlinkMode = 1;
+@@ -167,24 +122,6 @@ pub const VTE_REGEX_FLAGS_DEFAULT: c_int = 1075314688;
+ pub const VTE_SPAWN_NO_PARENT_ENVV: c_int = 33554432;
+ pub const VTE_SPAWN_NO_SYSTEMD_SCOPE: c_int = 67108864;
+ pub const VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE: c_int = 134217728;
+-pub const VTE_SYSTEMD_PROPERTY_BOOT_ID: &[u8] = b"bootid\0";
+-pub const VTE_SYSTEMD_PROPERTY_COMM: &[u8] = b"comm\0";
+-pub const VTE_SYSTEMD_PROPERTY_COMMAND_LINE: &[u8] = b"cmdline\0";
+-pub const VTE_SYSTEMD_PROPERTY_CONTAINER: &[u8] = b"container\0";
+-pub const VTE_SYSTEMD_PROPERTY_CONTEXT_ID: &[u8] = b"context-id\0";
+-pub const VTE_SYSTEMD_PROPERTY_CONTEXT_TYPE: &[u8] = b"type\0";
+-pub const VTE_SYSTEMD_PROPERTY_CURRENT_DIRECTORY: &[u8] = b"cwd\0";
+-pub const VTE_SYSTEMD_PROPERTY_EXIT_CONDITION: &[u8] = b"exit\0";
+-pub const VTE_SYSTEMD_PROPERTY_EXIT_SIGNAL: &[u8] = b"signal\0";
+-pub const VTE_SYSTEMD_PROPERTY_EXIT_STATUS: &[u8] = b"status\0";
+-pub const VTE_SYSTEMD_PROPERTY_HOSTNAME: &[u8] = b"hostname\0";
+-pub const VTE_SYSTEMD_PROPERTY_MACHINE_ID: &[u8] = b"machineid\0";
+-pub const VTE_SYSTEMD_PROPERTY_PID: &[u8] = b"pid\0";
+-pub const VTE_SYSTEMD_PROPERTY_PIDFD_INODE: &[u8] = b"pidfdid\0";
+-pub const VTE_SYSTEMD_PROPERTY_TARGET_HOST: &[u8] = b"targethost\0";
+-pub const VTE_SYSTEMD_PROPERTY_TARGET_USER: &[u8] = b"targetuser\0";
+-pub const VTE_SYSTEMD_PROPERTY_USER: &[u8] = b"user\0";
+-pub const VTE_SYSTEMD_PROPERTY_VM: &[u8] = b"vm\0";
+ pub const VTE_TERMPROP_CONTAINER_NAME: &[u8] = b"vte.container.name\0";
+ pub const VTE_TERMPROP_CONTAINER_RUNTIME: &[u8] = b"vte.container.runtime\0";
+ pub const VTE_TERMPROP_CONTAINER_UID: &[u8] = b"vte.container.uid\0";
+@@ -386,7 +320,6 @@ impl ::std::fmt::Debug for VteTerminalClass {
+             .field("setup_context_menu", &self.setup_context_menu)
+             .field("termprops_changed", &self.termprops_changed)
+             .field("termprop_changed", &self.termprop_changed)
+-            .field("systemd_context", &self.systemd_context)
+             .finish()
+     }
+ }
+@@ -496,26 +429,6 @@ unsafe extern "C" {
+     pub fn vte_regex_error_get_type() -> GType;
+     pub fn vte_regex_error_quark() -> glib::GQuark;
+ 
+-    //=========================================================================
+-    // VteSystemdContextExitCondition
+-    //=========================================================================
+-    pub fn vte_systemd_context_exit_condition_get_type() -> GType;
+-
+-    //=========================================================================
+-    // VteSystemdContextOperation
+-    //=========================================================================
+-    pub fn vte_systemd_context_operation_get_type() -> GType;
+-
+-    //=========================================================================
+-    // VteSystemdContextType
+-    //=========================================================================
+-    pub fn vte_systemd_context_type_get_type() -> GType;
+-
+-    //=========================================================================
+-    // VteSystemdPropertyId
+-    //=========================================================================
+-    pub fn vte_systemd_property_id_get_type() -> GType;
+-
+     //=========================================================================
+     // VteTextBlinkMode
+     //=========================================================================
+diff --git a/zoha-vte-sys/tests/abi.rs b/zoha-vte-sys/tests/abi.rs
+index 4f1478b..c4b0abc 100644
+--- a/zoha-vte-sys/tests/abi.rs
++++ b/zoha-vte-sys/tests/abi.rs
+@@ -293,34 +293,6 @@ const RUST_LAYOUTS: &[(&str, Layout)] = &[
+             alignment: align_of::<VteRegexError>(),
+         },
+     ),
+-    (
+-        "VteSystemdContextExitCondition",
+-        Layout {
+-            size: size_of::<VteSystemdContextExitCondition>(),
+-            alignment: align_of::<VteSystemdContextExitCondition>(),
+-        },
+-    ),
+-    (
+-        "VteSystemdContextOperation",
+-        Layout {
+-            size: size_of::<VteSystemdContextOperation>(),
+-            alignment: align_of::<VteSystemdContextOperation>(),
+-        },
+-    ),
+-    (
+-        "VteSystemdContextType",
+-        Layout {
+-            size: size_of::<VteSystemdContextType>(),
+-            alignment: align_of::<VteSystemdContextType>(),
+-        },
+-    ),
+-    (
+-        "VteSystemdPropertyId",
+-        Layout {
+-            size: size_of::<VteSystemdPropertyId>(),
+-            alignment: align_of::<VteSystemdPropertyId>(),
+-        },
+-    ),
+     (
+         "VteTerminal",
+         Layout {
+@@ -431,61 +403,6 @@ const RUST_CONSTANTS: &[(&str, &str)] = &[
+     ("VTE_SPAWN_NO_PARENT_ENVV", "33554432"),
+     ("VTE_SPAWN_NO_SYSTEMD_SCOPE", "67108864"),
+     ("VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE", "134217728"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_CRASH", "1"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_FAILURE", "2"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_INTERRUPT", "3"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_SUCCESS", "0"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_OPERATION_END", "2"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_OPERATION_START", "1"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_APP", "1"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_BOOT", "2"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_BUILTIN", "0"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_CHPRIV", "3"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_COMMAND", "4"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_CONTAINER", "5"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_ELEVATE", "6"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_REMOTE", "7"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_SERVICE", "8"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_SESSION", "9"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_SHELL", "10"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_SUBCONTEXT", "11"),
+-    ("(gint) VTE_SYSTEMD_CONTEXT_TYPE_VM", "12"),
+-    ("VTE_SYSTEMD_PROPERTY_BOOT_ID", "bootid"),
+-    ("VTE_SYSTEMD_PROPERTY_COMM", "comm"),
+-    ("VTE_SYSTEMD_PROPERTY_COMMAND_LINE", "cmdline"),
+-    ("VTE_SYSTEMD_PROPERTY_CONTAINER", "container"),
+-    ("VTE_SYSTEMD_PROPERTY_CONTEXT_ID", "context-id"),
+-    ("VTE_SYSTEMD_PROPERTY_CONTEXT_TYPE", "type"),
+-    ("VTE_SYSTEMD_PROPERTY_CURRENT_DIRECTORY", "cwd"),
+-    ("VTE_SYSTEMD_PROPERTY_EXIT_CONDITION", "exit"),
+-    ("VTE_SYSTEMD_PROPERTY_EXIT_SIGNAL", "signal"),
+-    ("VTE_SYSTEMD_PROPERTY_EXIT_STATUS", "status"),
+-    ("VTE_SYSTEMD_PROPERTY_HOSTNAME", "hostname"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_BOOT_ID", "1"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_COMM", "2"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_COMMAND_LINE", "3"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_CONTAINER", "4"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_CONTEXT_ID", "0"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_CONTEXT_TYPE", "5"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_CURRENT_DIRECTORY", "6"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_EXIT_CONDITION", "7"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_EXIT_SIGNAL", "8"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_EXIT_STATUS", "9"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_HOSTNAME", "10"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_MACHINE_ID", "11"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_PID", "12"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_PIDFD_INODE", "13"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_TARGET_HOST", "14"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_TARGET_USER", "15"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_USER", "16"),
+-    ("(gint) VTE_SYSTEMD_PROPERTY_ID_VM", "17"),
+-    ("VTE_SYSTEMD_PROPERTY_MACHINE_ID", "machineid"),
+-    ("VTE_SYSTEMD_PROPERTY_PID", "pid"),
+-    ("VTE_SYSTEMD_PROPERTY_PIDFD_INODE", "pidfdid"),
+-    ("VTE_SYSTEMD_PROPERTY_TARGET_HOST", "targethost"),
+-    ("VTE_SYSTEMD_PROPERTY_TARGET_USER", "targetuser"),
+-    ("VTE_SYSTEMD_PROPERTY_USER", "user"),
+-    ("VTE_SYSTEMD_PROPERTY_VM", "vm"),
+     ("VTE_TERMPROP_CONTAINER_NAME", "vte.container.name"),
+     ("VTE_TERMPROP_CONTAINER_RUNTIME", "vte.container.runtime"),
+     ("VTE_TERMPROP_CONTAINER_UID", "vte.container.uid"),
+diff --git a/zoha-vte-sys/tests/constant.c b/zoha-vte-sys/tests/constant.c
+index 36006bc..985ba64 100644
+--- a/zoha-vte-sys/tests/constant.c
++++ b/zoha-vte-sys/tests/constant.c
+@@ -101,61 +101,6 @@ int main() {
+     PRINT_CONSTANT(VTE_SPAWN_NO_PARENT_ENVV);
+     PRINT_CONSTANT(VTE_SPAWN_NO_SYSTEMD_SCOPE);
+     PRINT_CONSTANT(VTE_SPAWN_REQUIRE_SYSTEMD_SCOPE);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_CRASH);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_FAILURE);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_INTERRUPT);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_EXIT_CONDITION_SUCCESS);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_OPERATION_END);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_OPERATION_START);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_APP);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_BOOT);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_BUILTIN);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_CHPRIV);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_COMMAND);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_CONTAINER);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_ELEVATE);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_REMOTE);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_SERVICE);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_SESSION);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_SHELL);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_SUBCONTEXT);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_CONTEXT_TYPE_VM);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_BOOT_ID);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_COMM);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_COMMAND_LINE);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_CONTAINER);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_CONTEXT_ID);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_CONTEXT_TYPE);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_CURRENT_DIRECTORY);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_EXIT_CONDITION);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_EXIT_SIGNAL);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_EXIT_STATUS);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_HOSTNAME);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_BOOT_ID);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_COMM);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_COMMAND_LINE);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_CONTAINER);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_CONTEXT_ID);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_CONTEXT_TYPE);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_CURRENT_DIRECTORY);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_EXIT_CONDITION);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_EXIT_SIGNAL);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_EXIT_STATUS);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_HOSTNAME);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_MACHINE_ID);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_PID);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_PIDFD_INODE);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_TARGET_HOST);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_TARGET_USER);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_USER);
+-    PRINT_CONSTANT((gint) VTE_SYSTEMD_PROPERTY_ID_VM);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_MACHINE_ID);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_PID);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_PIDFD_INODE);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_TARGET_HOST);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_TARGET_USER);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_USER);
+-    PRINT_CONSTANT(VTE_SYSTEMD_PROPERTY_VM);
+     PRINT_CONSTANT(VTE_TERMPROP_CONTAINER_NAME);
+     PRINT_CONSTANT(VTE_TERMPROP_CONTAINER_RUNTIME);
+     PRINT_CONSTANT(VTE_TERMPROP_CONTAINER_UID);
+diff --git a/zoha-vte-sys/tests/layout.c b/zoha-vte-sys/tests/layout.c
+index 4a8bed1..9e16fea 100644
+--- a/zoha-vte-sys/tests/layout.c
++++ b/zoha-vte-sys/tests/layout.c
+@@ -21,10 +21,6 @@ int main() {
+     printf("%s;%zu;%zu\n", "VtePtyError", sizeof(VtePtyError), alignof(VtePtyError));
+     printf("%s;%zu;%zu\n", "VtePtyFlags", sizeof(VtePtyFlags), alignof(VtePtyFlags));
+     printf("%s;%zu;%zu\n", "VteRegexError", sizeof(VteRegexError), alignof(VteRegexError));
+-    printf("%s;%zu;%zu\n", "VteSystemdContextExitCondition", sizeof(VteSystemdContextExitCondition), alignof(VteSystemdContextExitCondition));
+-    printf("%s;%zu;%zu\n", "VteSystemdContextOperation", sizeof(VteSystemdContextOperation), alignof(VteSystemdContextOperation));
+-    printf("%s;%zu;%zu\n", "VteSystemdContextType", sizeof(VteSystemdContextType), alignof(VteSystemdContextType));
+-    printf("%s;%zu;%zu\n", "VteSystemdPropertyId", sizeof(VteSystemdPropertyId), alignof(VteSystemdPropertyId));
+     printf("%s;%zu;%zu\n", "VteTerminal", sizeof(VteTerminal), alignof(VteTerminal));
+     printf("%s;%zu;%zu\n", "VteTerminalClass", sizeof(VteTerminalClass), alignof(VteTerminalClass));
+     printf("%s;%zu;%zu\n", "VteTextBlinkMode", sizeof(VteTextBlinkMode), alignof(VteTextBlinkMode));

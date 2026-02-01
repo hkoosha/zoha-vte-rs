@@ -2,8 +2,8 @@
 library = "Vte"
 version = "2.91"
 deprecate_by_min_version = true
-generate_safety_asserts = true
-min_cfg_version = "3.4"
+generate_safety_asserts = false
+min_cfg_version = "1.0"
 single_version_file = true
 target_path = "."
 work_mode = "normal"
@@ -11,14 +11,13 @@ generate_builder = true
 
 girs_directories = [
     "../gir-files/",
-    "../local/vte/share/gir-1.0/",
+    "../vte/share/gir-1.0/",
 ]
 
 external_libraries = [
     "Atk",
     "Cairo",
     "GLib",
-    "GObject",
     "Gdk",
     "GdkPixbuf",
     "Gio",
@@ -27,21 +26,35 @@ external_libraries = [
 ]
 
 generate = [
+    "Vte.Align",
     "Vte.CursorBlinkMode",
     "Vte.CursorShape",
     "Vte.EraseBinding",
+    "Vte.EventContext",
     "Vte.FeatureFlags",
     "Vte.Format",
+    "Vte.ProgressHint",
+    "Vte.PropertiesRegistry",
+    "Vte.PropertyFlags",
+    "Vte.PropertyId",
+    "Vte.PropertyType",
     "Vte.Pty",
-    "Vte.PtyFlags",
     "Vte.PtyError",
+    "Vte.PtyFlags",
     "Vte.Regex",
     "Vte.RegexError",
-    "Vte.Terminal",
-    "Vte.TextBlinkMode",
-    "Vte.WriteFlags",
     "Vte.SelectionFunc",
+    "Vte.SystemdContextExitCondition",
+    "Vte.SystemdContextOperation",
+    "Vte.SystemdContextType",
+    "Vte.SystemdPropertyId",
+    "Vte.Terminal",
     "Vte.TerminalSpawnAsyncCallback",
+    "Vte.TextBlinkMode",
+    "Vte.Uuid",
+    "Vte.UuidFormat",
+    "Vte.WriteFlags",
+    "Vte.Properties",
 ]
 
 manual = [
@@ -73,20 +86,6 @@ manual = [
     "Gtk.Widget",
     "Gtk.Window",
     "Pango.FontDescription",
-    "Vte.Align",
-    "Vte.EventContext",
-    "Vte.ProgressHint",
-    "Vte.Properties",
-    "Vte.PropertiesRegistry",
-    "Vte.PropertyFlags",
-    "Vte.PropertyId",
-    "Vte.PropertyType",
-    "Vte.SystemdContextExitCondition",
-    "Vte.SystemdContextOperation",
-    "Vte.SystemdContextType",
-    "Vte.SystemdPropertyId",
-    "Vte.Uuid",
-    "Vte.UuidFormat",
     "cairo.FontOptions",
     "cairo.Surface",
 ]

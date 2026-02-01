@@ -12,7 +12,7 @@ readme = "README.md"
 
 [package.metadata.system-deps.vte_2_91]
 name = "vte-2.91"
-version = "0.86"
+version = "0.85"
 
 [package.metadata.docs.rs]
 rustdoc-args = ["--generate-link-to-definition"]
@@ -23,14 +23,14 @@ name = "vte_sys"
 
 [dependencies]
 libc = "0.2"
-cairo-sys-rs = "0.21.5"
-gdk-pixbuf-sys = "0.21.5"
+cairo-sys-rs = "0.18.2"
+gdk-pixbuf-sys = "0.18.0"
 gdk-sys = "0.18.2"
-gio-sys = "0.21.5"
-glib-sys = "0.21.5"
-gobject-sys = "0.21.5"
+gio-sys = "0.18.1"
+glib-sys = "0.18.1"
+gobject-sys = "0.18.0"
 gtk-sys = "0.18.2"
-pango-sys = "0.21.5"
+pango-sys = "0.18.0"
 
 [build-dependencies]
 system-deps = "7"

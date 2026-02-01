@@ -12,20 +12,14 @@ readme = "README.md"
 libc = "0.2"
 bitflags = "1.3.2"
 
-cairo-rs = "0.21.5"
-cairo-sys-rs = "0.21.5"
-gdk-pixbuf = "0.21.5"
-gdk-pixbuf-sys = "0.21.5"
+atk = "0.18.2"
+cairo-rs = "0.18.2"
+gdk-pixbuf = "0.18.0"
 gdk = "0.18.2"
-gdk-sys = "0.18.2"
-gio = "0.21.5"
-gio-sys = "0.21.5"
-glib = "0.21.5"
-glib-sys = "0.21.5"
-gobject-sys = "0.21.5"
+gio = "0.18.1"
+glib = "0.18.1"
 gtk = "0.18.2"
-gtk-sys = "0.18.2"
-pango = "0.21.5"
-pango-sys = "0.21.5"
+gobject = {package = "gobject-sys", version = "0.18.0" }
+pango = "0.18.0"
 
-zoha-vte-sys = { path = "../zoha-vte-sys", version = "0.7.0"}
+ffi = {package = "zoha-vte-sys", path = "../zoha-vte-sys", version = "0.7.0"}

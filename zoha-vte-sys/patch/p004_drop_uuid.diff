@@ -1,0 +1,41 @@
+diff --git a/zoha-vte-sys/src/lib.rs b/zoha-vte-sys/src/lib.rs
+index 9c5bc58..083d852 100644
+--- a/zoha-vte-sys/src/lib.rs
++++ b/zoha-vte-sys/src/lib.rs
+@@ -166,8 +166,6 @@ pub const VTE_UUID_FORMAT_SIMPLE: VteUuidFormat = 1;
+ pub const VTE_UUID_FORMAT_BRACED: VteUuidFormat = 2;
+ pub const VTE_UUID_FORMAT_URN: VteUuidFormat = 4;
+ pub const VTE_UUID_FORMAT_ANY: VteUuidFormat = 7;
+-pub const VTE_UUID_FORMAT_ID128: VteUuidFormat = 8;
+-pub const VTE_UUID_FORMAT_ANY_ID128: VteUuidFormat = 15;
+ 
+ // Callbacks
+ pub type VteSelectionFunc =
+diff --git a/zoha-vte-sys/tests/abi.rs b/zoha-vte-sys/tests/abi.rs
+index c4b0abc..2802f0f 100644
+--- a/zoha-vte-sys/tests/abi.rs
++++ b/zoha-vte-sys/tests/abi.rs
+@@ -424,9 +424,7 @@ const RUST_CONSTANTS: &[(&str, &str)] = &[
+     ("(gint) VTE_TEXT_BLINK_NEVER", "0"),
+     ("(gint) VTE_TEXT_BLINK_UNFOCUSED", "2"),
+     ("(guint) VTE_UUID_FORMAT_ANY", "7"),
+-    ("(guint) VTE_UUID_FORMAT_ANY_ID128", "15"),
+     ("(guint) VTE_UUID_FORMAT_BRACED", "2"),
+-    ("(guint) VTE_UUID_FORMAT_ID128", "8"),
+     ("(guint) VTE_UUID_FORMAT_SIMPLE", "1"),
+     ("(guint) VTE_UUID_FORMAT_URN", "4"),
+     ("(gint) VTE_WRITE_DEFAULT", "0"),
+diff --git a/zoha-vte-sys/tests/constant.c b/zoha-vte-sys/tests/constant.c
+index 985ba64..c660633 100644
+--- a/zoha-vte-sys/tests/constant.c
++++ b/zoha-vte-sys/tests/constant.c
+@@ -122,9 +122,7 @@ int main() {
+     PRINT_CONSTANT((gint) VTE_TEXT_BLINK_NEVER);
+     PRINT_CONSTANT((gint) VTE_TEXT_BLINK_UNFOCUSED);
+     PRINT_CONSTANT((guint) VTE_UUID_FORMAT_ANY);
+-    PRINT_CONSTANT((guint) VTE_UUID_FORMAT_ANY_ID128);
+     PRINT_CONSTANT((guint) VTE_UUID_FORMAT_BRACED);
+-    PRINT_CONSTANT((guint) VTE_UUID_FORMAT_ID128);
+     PRINT_CONSTANT((guint) VTE_UUID_FORMAT_SIMPLE);
+     PRINT_CONSTANT((guint) VTE_UUID_FORMAT_URN);
+     PRINT_CONSTANT((gint) VTE_WRITE_DEFAULT);
