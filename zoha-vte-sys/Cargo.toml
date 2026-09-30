@@ -1,6 +1,6 @@
 [package]
 name = "zoha-vte-sys"
-version = "0.7.0"
+version = "0.7.1"
 links = '"vte-2.91"'
 edition = "2024"
 build = "build.rs"
